@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <android.support.v7.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="25dp"
+                android:layout_marginBottom="25dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical" >
+
+                    <EditText
+                        android:id="@+id/edAddNewPlaceName"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="5dp"
+                        android:padding="10dp"
+                        android:maxLines="1"
+                        android:background="@drawable/edit_text_hide_border"
+                        android:hint="@string/hintEdAddNewPlaceName"/>
+
+                </LinearLayout>
+
+            </android.support.v7.widget.CardView>
+
+            <android.support.v7.widget.CardView
+                android:id="@+id/cvAddNewPlaceLocationPickup"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:onClick="cvAddNewPlaceLocationPickup_OnClick">
+
+                <TextView
+                    android:id="@+id/tvAddNewPlaceLocationPickupName"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:drawableRight="@drawable/ic_chevron_right_black_24dp"
+                    android:text="@string/tvAddNewPlaceLocationPickup"
+                    android:layout_gravity="center"
+                    android:padding="13dp"
+                    android:textSize="18.5sp"
+                    />
+
+            </android.support.v7.widget.CardView>
+
+            <android.support.v7.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="25dp"
+                android:layout_marginBottom="25dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical" >
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/tvAddNewPlaceChooseLocationTitle"
+                        android:padding="10dp"
+                        android:drawableRight="@drawable/ic_chevron_right_black_24dp"
+                        android:gravity="center_vertical"
+                        android:textSize="18.5sp"
+                        android:textStyle="bold"
+                        android:onClick="tvAddNewPlaceChoosenLocation_OnClick"/>
+
+                    <fragment xmlns:android="http://schemas.android.com/apk/res/android"
+                        android:id="@+id/mapPlace"
+                        android:name="com.google.android.gms.maps.SupportMapFragment"
+                        android:layout_width="match_parent"
+                        android:layout_height="200dp"
+                        android:layout_span="2" />
+
+                    <EditText
+                        android:id="@+id/edAddNewPlaceAddress"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="5dp"
+                        android:hint="@string/hintEdAddNewPlaceAddress"
+                        android:maxLines="1"
+                        />
+
+                    <EditText
+                        android:id="@+id/edAddNewPlacePhone"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="5dp"
+                        android:maxLines="1"
+                        android:inputType="phone"
+                        android:hint="@string/hintEdAddNewPlacePhone"/>
+
+                    <EditText
+                        android:id="@+id/edAddNewPlaceDescription"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="5dp"
+                        android:hint="@string/hintEdAddNewPlaceDescription"
+                        android:lines="5" />
+
+                </LinearLayout>
+            </android.support.v7.widget.CardView>
+
+
+            <android.support.v7.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="25dp"
+                android:layout_marginBottom="25dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:padding="15dp">
+
+                    <ImageView
+                        android:id="@+id/imgAddNewPlaceChooseImage"
+                        android:layout_width="100dp"
+                        android:layout_height="100dp"
+                        android:layout_marginTop="5dp"
+                        android:src="@drawable/ic_add_a_photo_black_24dp"
+                        android:scaleType="centerInside"
+                        android:background="@android:color/darker_gray"
+                        android:onClick="imgAddNewPlaceChooseImage_OnClick"
+                        android:layout_marginRight="15dp"/>
+
+                    <android.support.v7.widget.RecyclerView
+                        android:id="@+id/rcvAddNewPlacePictures"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:scrollbars="horizontal" />
+
+                </LinearLayout>
+
+            </android.support.v7.widget.CardView>
+
+
+        </LinearLayout>
+
+    </ScrollView>
+
+</LinearLayout>

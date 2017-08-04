@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_margin="7dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TableLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:stretchColumns="1">
+
+            <TableRow android:layout_height="wrap_content"
+                android:gravity="center">
+                <android.support.v7.widget.CardView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:cardElevation="0dp"
+                    android:layout_margin="5dp"
+                    app:cardCornerRadius="25dp">
+
+                    <ImageView
+                        android:id="@+id/imgItemUserImage"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/news_avatar"
+                        />
+
+                </android.support.v7.widget.CardView>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/tvItemNewsUserId"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Góc Thư Giản"
+                        android:textSize="14sp"
+                        android:textStyle="bold"/>
+
+                    <TextView
+                        android:id="@+id/tvItemNewsCreated"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textSize="12sp"
+                        android:text="1 tháng 8 lúc 01:36 SA"/>
+
+                    <TextView
+                        android:id="@+id/tvItemNewsLocation"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:drawableLeft="@drawable/ic_place_black_16dp"
+                        android:layout_marginLeft="-2dp"
+                        android:text="An Giang"/>
+
+                </LinearLayout>
+
+            </TableRow>
+
+            <TableRow
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp">
+
+                <android.support.v7.widget.CardView
+                    android:layout_span="2">
+
+                    <ImageView
+                        android:id="@+id/imgItemNewsPlace"
+                        android:layout_width="match_parent"
+                        android:layout_height="170dp"
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/pc_mieuba"/>
+
+                    <TextView
+                        android:id="@+id/tvItemNewsTitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="bottom"
+                        android:textColor="@color/colorYellow"
+                        android:textSize="16sp"
+                        android:text="Miếu bà chúa xứ Núi Sam"
+                        android:padding="16dp"
+                        android:textStyle="bold|italic"/>
+
+                </android.support.v7.widget.CardView>
+
+            </TableRow>
+
+            <TableRow>
+
+                <LinearLayout
+                    android:layout_span="2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingRight="10dp"
+                    android:gravity="right">
+
+                    <TextView
+                        android:id="@+id/tvItemNewsLike"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="6"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/tvItemNewsLike"
+                        android:paddingLeft="5dp"
+                        android:paddingRight="5dp" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/symbolDot"
+                        android:paddingRight="5dp"/>
+                    <TextView
+                        android:id="@+id/tvItemNewsComment"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="4"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/tvItemNewsComment"
+                        android:paddingLeft="5dp"
+                        android:paddingRight="5dp" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/symbolDot"
+                        android:paddingRight="5dp"/>
+                    <TextView
+                        android:id="@+id/tvItemNewsShare"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="2"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/tvItemNewsShare"
+                        android:paddingLeft="5dp"
+                        android:paddingRight="5dp" />
+
+                </LinearLayout>
+
+            </TableRow>
+
+            <TableRow>
+
+                <LinearLayout
+                    android:layout_span="2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center">
+
+                    <Button
+                        android:id="@+id/btnItemNewsLike"
+                        android:background="@android:color/transparent"
+                        android:text="@string/btnItemNewsLike"
+                        android:drawableLeft="@drawable/ic_favorite_border_black_24dp"
+                        android:drawablePadding="10dp"
+                        android:layout_height="wrap_content"
+                        android:layout_width="wrap_content"
+                        android:paddingLeft="10dp"
+                        android:paddingRight="10dp" />
+
+                    <Button
+                        android:id="@+id/btnItemNewsComment"
+                        android:background="@android:color/transparent"
+                        android:text="@string/btnItemNewsComment"
+                        android:drawableLeft="@drawable/ic_comment_black_24dp"
+                        android:drawablePadding="10dp"
+                        android:layout_height="wrap_content"
+                        android:layout_width="wrap_content"
+                        android:paddingLeft="10dp"
+                        android:paddingRight="10dp" />
+
+                    <Button
+                        android:id="@+id/btnItemNewsShare"
+                        android:background="@android:color/transparent"
+                        android:text="@string/btnItemNewsShare"
+                        android:drawableLeft="@drawable/ic_share_black_24dp"
+                        android:drawablePadding="10dp"
+                        android:layout_height="wrap_content"
+                        android:layout_width="wrap_content"
+                        android:paddingLeft="10dp"
+                        android:paddingRight="10dp" />
+
+                </LinearLayout>
+
+            </TableRow>
+
+        </TableLayout>
+
+
+    </LinearLayout>
+
+</android.support.v7.widget.CardView>

@@ -1,0 +1,47 @@
+<resources>
+    <string name="app_name">Phượt thủ</string>
+    <string name="btnLoginFB">Đăng nhập bằng Facebook</string>
+    <string name="btnLoginGG">Đăng nhập bằng Google+</string>
+    <string name="title_activity_main">MainActivity</string>
+    <string name="section_format">Hello World from section: %1$d</string>
+    <string name="tabNewsFeed">Bài mới</string>
+    <string name="tabPopulate">Nổi bật</string>
+    <string name="tabLocation">Địa danh</string>
+    <string name="tabMyPosted">Bài tôi</string>
+    <string name="hintSearch">Bạn muốn đi đâu?</string>
+
+    <string name="navigation_place">Khám phá</string>
+    <string name="navigation_add">Bài mới</string>
+    <string name="navigation_search">Tìm kiếm</string>
+    <string name="navigation_fav">Yêu thích</string>
+    <string name="navigation_notifications">Thông báo</string>
+
+    <string name="menuAddNewPlaceAdd">Thêm</string>
+
+    <string name="tvItemNewsLike">lượt thích</string>
+    <string name="tvItemNewsComment">nhận xét</string>
+    <string name="tvItemNewsShare">chia sẽ</string>
+    <string name="symbolDot">•</string>
+
+    <string name="btnItemNewsLike">Thích</string>
+    <string name="btnItemNewsComment">Nhận xét</string>
+    <string name="btnItemNewsShare">Chia sẽ</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_activity_maps">Map</string>
+
+    <string name="tvAddNewPlaceLocationPickup">Chọn khu vực</string>
+    <string name="tvAddNewPlaceChooseLocationTitle">Chọn địa điểm</string>
+    <string name="hintEdAddNewPlaceAddress">Địa chỉ địa điểm</string>
+    <string name="hintEdAddNewPlacePhone">Số điện thoại</string>
+    <string name="hintEdAddNewPlaceDescription">Mô tả địa điểm</string>
+    <string name="hintEdAddNewPlaceName">Tên địa điểm</string>
+
+    <string name="msgRequestPermission">Vui lòng cấp phép truy cập</string>
+    <string name="msgRequestGrant">Cấp phép</string>
+    <string name="msgUnableLoadImage">Không thể tải hình ảnh</string>
+
+    <string name="titleChooseImage">Chọn hình ảnh</string>
+
+</resources>
