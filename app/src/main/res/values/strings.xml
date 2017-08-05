@@ -44,4 +44,7 @@
 
     <string name="titleChooseImage">Chọn hình ảnh</string>
 
+    <string name="tvPlaceDetailAddressTitle">Thông tin liên lạc</string>
+    <string name="tvPlaceDetailDescriptionTitle">Mô tả địa điểm</string>
+
 </resources>

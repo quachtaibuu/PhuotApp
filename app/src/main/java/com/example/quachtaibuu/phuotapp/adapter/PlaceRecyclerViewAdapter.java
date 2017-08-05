@@ -45,27 +45,6 @@ public class PlaceRecyclerViewAdapter extends RecyclerView.Adapter<PlaceRecycler
         holder.tvItemNewsCreated.setText(placeModel.getCreated());
         holder.tvItemNewsUserId.setText(placeModel.getUsername());
 
-        holder.btnItemNewsShare.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Toast.makeText(view.getContext(), String.format("Chia sẽ %s", placeModel.getTitle()), Toast.LENGTH_SHORT).show();
-            }
-        });
-
-        holder.btnItemNewsLike.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Toast.makeText(view.getContext(), String.format("Đã thích %s", placeModel.getTitle()), Toast.LENGTH_SHORT).show();
-            }
-        });
-
-        holder.btnItemNewsComment.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Toast.makeText(view.getContext(), String.format("Bình luận %s", placeModel.getTitle()), Toast.LENGTH_SHORT).show();
-            }
-        });
-
         holder.imgItemPlace.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

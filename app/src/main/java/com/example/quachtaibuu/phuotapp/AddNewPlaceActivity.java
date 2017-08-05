@@ -101,12 +101,6 @@ public class AddNewPlaceActivity extends AppCompatActivity implements OnMapReady
         this.rcvAddNewPlacePictures = (RecyclerView)findViewById(R.id.rcvAddNewPlacePictures);
         this.rcvAddNewPlacePictures.setHasFixedSize(true);
         this.rcvAddNewPlacePictures.setLayoutManager(this.layoutManager);
-
-        this.locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            return;
-        }
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
     }
 
     @Override
@@ -142,9 +136,9 @@ public class AddNewPlaceActivity extends AppCompatActivity implements OnMapReady
             Geocoder geocoder = new Geocoder(getApplicationContext(), Locale.getDefault());
             List<Address> addresses = geocoder.getFromLocation(latLng.latitude, latLng.longitude, 1);
             Address address = addresses.get(0);
-            //address.getLocality().replace("City", "")
+            String city = address.getLocality().replace("City", "");
             this.edAddNewPlaceAddress.setText(address.getAddressLine(0));
-            this.tvAddNewPlaceLocationPickupName.setText(address.getAddressLine(1));
+            this.tvAddNewPlaceLocationPickupName.setText(city);
         } catch (IOException e) {
             e.printStackTrace();
         }finally {
@@ -172,6 +166,12 @@ public class AddNewPlaceActivity extends AppCompatActivity implements OnMapReady
         this.mMapPlace = googleMap;
         LatLng center = new LatLng(10.7676563, 106.1338326);
         this.mMapPlace.moveCamera(CameraUpdateFactory.newLatLngZoom(center, 8));
+
+        this.locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
     }
 
     @Override

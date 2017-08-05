@@ -102,97 +102,19 @@
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     android:paddingRight="10dp"
+                    android:paddingBottom="10dp"
                     android:gravity="right">
 
                     <TextView
                         android:id="@+id/tvItemNewsLike"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:paddingRight="5dp"
                         android:text="6"/>
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/tvItemNewsLike"
-                        android:paddingLeft="5dp"
-                        android:paddingRight="5dp" />
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/symbolDot"
-                        android:paddingRight="5dp"/>
-                    <TextView
-                        android:id="@+id/tvItemNewsComment"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="4"/>
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/tvItemNewsComment"
-                        android:paddingLeft="5dp"
-                        android:paddingRight="5dp" />
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/symbolDot"
-                        android:paddingRight="5dp"/>
-                    <TextView
-                        android:id="@+id/tvItemNewsShare"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="2"/>
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/tvItemNewsShare"
-                        android:paddingLeft="5dp"
-                        android:paddingRight="5dp" />
-
-                </LinearLayout>
-
-            </TableRow>
-
-            <TableRow>
-
-                <LinearLayout
-                    android:layout_span="2"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center">
-
-                    <Button
-                        android:id="@+id/btnItemNewsLike"
-                        android:background="@android:color/transparent"
-                        android:text="@string/btnItemNewsLike"
-                        android:drawableLeft="@drawable/ic_favorite_border_black_24dp"
-                        android:drawablePadding="10dp"
-                        android:layout_height="wrap_content"
-                        android:layout_width="wrap_content"
-                        android:paddingLeft="10dp"
-                        android:paddingRight="10dp" />
-
-                    <Button
-                        android:id="@+id/btnItemNewsComment"
-                        android:background="@android:color/transparent"
-                        android:text="@string/btnItemNewsComment"
-                        android:drawableLeft="@drawable/ic_comment_black_24dp"
-                        android:drawablePadding="10dp"
-                        android:layout_height="wrap_content"
-                        android:layout_width="wrap_content"
-                        android:paddingLeft="10dp"
-                        android:paddingRight="10dp" />
-
-                    <Button
-                        android:id="@+id/btnItemNewsShare"
-                        android:background="@android:color/transparent"
-                        android:text="@string/btnItemNewsShare"
-                        android:drawableLeft="@drawable/ic_share_black_24dp"
-                        android:drawablePadding="10dp"
-                        android:layout_height="wrap_content"
-                        android:layout_width="wrap_content"
-                        android:paddingLeft="10dp"
-                        android:paddingRight="10dp" />
+                        android:text="@string/tvItemNewsLike" />
 
                 </LinearLayout>
 
