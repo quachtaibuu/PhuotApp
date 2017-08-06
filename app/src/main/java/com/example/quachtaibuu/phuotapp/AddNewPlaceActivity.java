@@ -52,7 +52,7 @@ public class AddNewPlaceActivity extends AppCompatActivity implements OnMapReady
 
     private final int PICK_IMAGE_REQUEST = 1;
     private final int PICK_LOCATION_REQUEST = 10;
-    private final int PICK_PLACE_REQUEST = 100;
+    private final int PICK_PLACE_REQUEST = 200;
 
     private GoogleMap mMapPlace;
     private LocationManager locationManager;
