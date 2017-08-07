@@ -22,7 +22,7 @@ import com.example.quachtaibuu.phuotapp.R;
  * Created by Quach Tai Buu on 2017-08-01.
  */
 
-public abstract class AbsRuntimePermission extends Activity {
+public abstract class AbsRuntimePermission extends AppCompatActivity {
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState, @Nullable PersistableBundle persistentState) {

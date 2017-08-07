@@ -2,6 +2,7 @@
 
     <string name="facebook_app_id">167918773753177</string>
     <string name="fb_login_protocol_scheme">fb167918773753177</string>
+    <string name="gg_web_client_id">532468520339-jqlkqmprq22l3s2duj9so3r4pg55ej7c.apps.googleusercontent.com</string>
 
     <string name="app_name">Phượt thủ</string>
     <string name="btnLoginFB">Đăng nhập bằng Facebook</string>
