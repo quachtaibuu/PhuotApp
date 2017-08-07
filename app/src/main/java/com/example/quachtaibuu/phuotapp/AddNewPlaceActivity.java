@@ -14,6 +14,7 @@ import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputEditText;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentManager;
@@ -23,6 +24,7 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -32,6 +34,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.example.quachtaibuu.phuotapp.adapter.BitmapRecyclerViewAdapter;
 import com.example.quachtaibuu.phuotapp.model.LocationModel;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -40,6 +43,11 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.google.gson.Gson;
 
 import java.io.File;
@@ -113,7 +121,28 @@ public class AddNewPlaceActivity extends AppCompatActivity implements OnMapReady
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menuAddNewPlaceAdd:
-                Toast.makeText(this, "Thêm thông địa điểm", Toast.LENGTH_SHORT).show();
+                FirebaseStorage storage = FirebaseStorage.getInstance();
+                StorageReference storageRef = storage.getReference();
+
+                for(Uri imgUri: this.lstUriImageChoosen) {
+                    final String imgName = imgUri.getLastPathSegment();
+                    StorageReference ref = storageRef.child("/img_places/" + imgName);
+                    UploadTask uploadTask = ref.putFile(imgUri);
+
+                    uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                            taskSnapshot.getDownloadUrl();
+                            Toast.makeText(AddNewPlaceActivity.this, taskSnapshot.getDownloadUrl().getPath(), Toast.LENGTH_SHORT).show();
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Log.d(String.format("Storage %s Failure", imgName), e.getMessage());
+                        }
+                    });
+                }
+                Toast.makeText(this, "Thêm thông tin địa điểm", Toast.LENGTH_SHORT).show();
                 break;
         }
         return super.onOptionsItemSelected(item);

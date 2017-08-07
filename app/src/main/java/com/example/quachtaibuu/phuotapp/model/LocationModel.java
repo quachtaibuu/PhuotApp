@@ -1,5 +1,8 @@
 package com.example.quachtaibuu.phuotapp.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by Quach Tai Buu on 2017-07-31.
  */
@@ -10,6 +13,7 @@ public class LocationModel {
     private String name;
     private String description;
     private int image;
+    private List<PlaceModel> places = new ArrayList<>();
 
     public LocationModel() {
     }
@@ -19,6 +23,14 @@ public class LocationModel {
         this.name = name;
         this.description = description;
         this.image = image;
+    }
+
+    public LocationModel(String id, String name, String description, int image, List<PlaceModel> places) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.image = image;
+        this.places = places;
     }
 
     public String getId() {
@@ -53,6 +65,14 @@ public class LocationModel {
         this.image = image;
     }
 
+    public List<PlaceModel> getPlaces() {
+        return places;
+    }
+
+    public void setPlaces(List<PlaceModel> places) {
+        this.places = places;
+    }
+
     @Override
     public String toString() {
         return "LocationModel{" +
@@ -60,7 +80,7 @@ public class LocationModel {
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
                 ", image=" + image +
+                ", places=" + places.toString() +
                 '}';
     }
-
 }

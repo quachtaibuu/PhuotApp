@@ -20,6 +20,9 @@ public class PlaceModel {
     private double latitude;
     private double longitude;
 
+    private LocationModel location;
+    private UserModel user;
+
     public PlaceModel() {
     }
 
@@ -47,6 +50,22 @@ public class PlaceModel {
         this.getCountShare = getCountShare;
         this.latitude = latitude;
         this.longitude = longitude;
+    }
+
+    public PlaceModel(String title, int userImage, String username, String created, String locationName, int placeImage, int countLike, int countComment, int getCountShare, double latitude, double longitude, LocationModel location, UserModel user) {
+        this.title = title;
+        this.userImage = userImage;
+        this.username = username;
+        this.created = created;
+        this.locationName = locationName;
+        this.placeImage = placeImage;
+        this.countLike = countLike;
+        this.countComment = countComment;
+        this.getCountShare = getCountShare;
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.location = location;
+        this.user = user;
     }
 
     public String getTitle() {
@@ -137,6 +156,22 @@ public class PlaceModel {
         this.longitude = longitude;
     }
 
+    public LocationModel getLocation() {
+        return location;
+    }
+
+    public void setLocation(LocationModel location) {
+        this.location = location;
+    }
+
+    public UserModel getUser() {
+        return user;
+    }
+
+    public void setUser(UserModel user) {
+        this.user = user;
+    }
+
     @Override
     public String toString() {
         return "PlaceModel{" +
@@ -149,6 +184,10 @@ public class PlaceModel {
                 ", countLike=" + countLike +
                 ", countComment=" + countComment +
                 ", getCountShare=" + getCountShare +
+                ", latitude=" + latitude +
+                ", longitude=" + longitude +
+                ", location=" + location.toString() +
+                ", user=" + user.toString() +
                 '}';
     }
 }

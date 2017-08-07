@@ -15,6 +15,12 @@ import android.widget.Toast;
 import com.example.quachtaibuu.phuotapp.adapter.LocationRecyclerViewAdapter;
 import com.example.quachtaibuu.phuotapp.model.LocationModel;
 import com.example.quachtaibuu.phuotapp.utils.RecyclerItemClickListener;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,16 +32,18 @@ import java.util.List;
 public class TabLocationFragment extends Fragment {
 
     private List<LocationModel> lstData = new ArrayList<>();
+    private List<String> lstDataKey = new ArrayList<>();
+
     private RecyclerView rcvListLocations;
     private LocationRecyclerViewAdapter locationAdapter;
     private RecyclerView.LayoutManager layoutManager;
+
+    private DatabaseReference databaseRef;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         final View rootView = inflater.inflate(R.layout.fragment_tab_location, container, false);
-
-        this.loadData();
 
         this.locationAdapter = new LocationRecyclerViewAdapter(this.lstData);
         this.layoutManager = new LinearLayoutManager(rootView.getContext());
@@ -58,14 +66,55 @@ public class TabLocationFragment extends Fragment {
             }
         }));
 
+        this.databaseRef = FirebaseDatabase.getInstance().getReference().child("locations");
+        this.databaseRef.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(final DataSnapshot dataSnapshot, String s) {
+                String key = dataSnapshot.getKey();
+                if(lstDataKey.indexOf(key) == -1) {
+                    LocationModel location = dataSnapshot.getValue(LocationModel.class);
+                    location.setId(key);
+                    lstDataKey.add(key);
+                    lstData.add(location);
+                    locationAdapter.notifyDataSetChanged();
+                }
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                String key = dataSnapshot.getKey();
+                int index = lstDataKey.indexOf(key);
+                if(index != -1) {
+                    LocationModel location = dataSnapshot.getValue(LocationModel.class);
+                    location.setId(dataSnapshot.getKey());
+                    lstData.set(index, location);
+                    locationAdapter.notifyDataSetChanged();
+                }
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+                String key = dataSnapshot.getKey();
+                int index = lstDataKey.indexOf(key);
+                if(index != -1) {
+                    lstDataKey.remove(index);
+                    lstData.remove(index);
+                    locationAdapter.notifyDataSetChanged();
+                }
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
         return rootView;
     }
 
-
-    private void loadData() {
-        lstData.add(new LocationModel("1", "An Giang", "Thất sơn huyền bí", R.drawable.loc_angiang));
-        lstData.add(new LocationModel("2", "Bạc Liêu", "Xứ sở cơ cầu của Hắc công tử", R.drawable.loc_baclieu));
-        lstData.add(new LocationModel("1", "An Giang", "Thất sơn huyền bí", R.drawable.loc_angiang));
-        lstData.add(new LocationModel("2", "Bạc Liêu", "Xứ sở cơ cầu của Hắc công tử", R.drawable.loc_baclieu));
-    }
 }
