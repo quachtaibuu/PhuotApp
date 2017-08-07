@@ -1,4 +1,8 @@
 <resources>
+
+    <string name="facebook_app_id">167918773753177</string>
+    <string name="fb_login_protocol_scheme">fb167918773753177</string>
+
     <string name="app_name">Phượt thủ</string>
     <string name="btnLoginFB">Đăng nhập bằng Facebook</string>
     <string name="btnLoginGG">Đăng nhập bằng Google+</string>
@@ -15,6 +19,8 @@
     <string name="navigation_search">Tìm kiếm</string>
     <string name="navigation_fav">Yêu thích</string>
     <string name="navigation_notifications">Thông báo</string>
+
+    <string name="action_logout">Đăng xuất</string>
 
     <string name="menuAddNewPlaceAdd">Thêm</string>
 

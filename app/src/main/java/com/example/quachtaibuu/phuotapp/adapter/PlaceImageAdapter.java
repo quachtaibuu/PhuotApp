@@ -40,7 +40,7 @@ public class PlaceImageAdapter extends PagerAdapter {
     public Object instantiateItem(ViewGroup container, int position) {
         LayoutInflater inflater = LayoutInflater.from(this.context);
         View slidePlaceView = inflater.inflate(R.layout.fragment_slide_place_image, container, false);
-        ImageView imgSlidePlaceImage = slidePlaceView.findViewById(R.id.imgSlidePlaceImage);
+        ImageView imgSlidePlaceImage = (ImageView) slidePlaceView.findViewById(R.id.imgSlidePlaceImage);
         imgSlidePlaceImage.setImageResource(this.lstData.get(position));
         container.addView(slidePlaceView, 0);
         return slidePlaceView;
