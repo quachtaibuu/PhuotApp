@@ -42,12 +42,14 @@ public class LocationSearchAdapter extends ArrayAdapter<LocationModel> {
 
         LayoutInflater inflater = LayoutInflater.from(context);
         View rootView = inflater.inflate(R.layout.item_search_location, null, false);
-        this.tvItemSearchTitle = (TextView) rootView.findViewById(R.id.tvItemSearchTitle);
-        this.tvItemSearchDesceiption = (TextView) rootView.findViewById(R.id.tvItemSearchDescription);
-        LocationModel locationModel = this.objects.get(position);
+        if(this.objects.size() > 0) {
+            this.tvItemSearchTitle = (TextView) rootView.findViewById(R.id.tvItemSearchTitle);
+            this.tvItemSearchDesceiption = (TextView) rootView.findViewById(R.id.tvItemSearchDescription);
+            LocationModel locationModel = this.objects.get(position);
 
-        this.tvItemSearchTitle.setText(locationModel.getName());
-        this.tvItemSearchDesceiption.setText(locationModel.getDescription());
+            this.tvItemSearchTitle.setText(locationModel.getName());
+            this.tvItemSearchDesceiption.setText(locationModel.getDescription());
+        }
 
         return rootView;
     }

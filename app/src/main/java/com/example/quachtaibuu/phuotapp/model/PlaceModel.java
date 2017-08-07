@@ -186,8 +186,8 @@ public class PlaceModel {
                 ", getCountShare=" + getCountShare +
                 ", latitude=" + latitude +
                 ", longitude=" + longitude +
-                ", location=" + location.toString() +
-                ", user=" + user.toString() +
+                //", location=" + location.toString() +
+                //", user=" + user.toString() +
                 '}';
     }
 }

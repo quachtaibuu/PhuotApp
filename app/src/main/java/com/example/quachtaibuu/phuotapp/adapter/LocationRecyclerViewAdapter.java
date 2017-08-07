@@ -34,7 +34,7 @@ public class LocationRecyclerViewAdapter extends RecyclerView.Adapter<LocationRe
     @Override
     public void onBindViewHolder(LocationRecyclerViewHolder holder, int position) {
         LocationModel locationModel = this.lstData.get(position);
-        holder.imgItemLocation.setImageResource(locationModel.getImage());
+        //holder.imgItemLocation.setImageResource(locationModel.getImage());
         holder.tvItemLocationTitle.setText(locationModel.getName());
         holder.tvItemLocationDescription.setText(locationModel.getDescription());
     }

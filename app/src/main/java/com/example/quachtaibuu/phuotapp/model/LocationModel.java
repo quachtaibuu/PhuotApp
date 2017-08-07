@@ -14,6 +14,8 @@ public class LocationModel {
     private String description;
     private int image;
     private List<PlaceModel> places = new ArrayList<>();
+    private double latitude;
+    private double longtitude;
 
     public LocationModel() {
     }
@@ -63,6 +65,22 @@ public class LocationModel {
 
     public void setImage(int image) {
         this.image = image;
+    }
+
+    public double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(double latitude) {
+        this.latitude = latitude;
+    }
+
+    public double getLongtitude() {
+        return longtitude;
+    }
+
+    public void setLongtitlongtitudeude(double longtitude) {
+        this.longtitude = longtitude;
     }
 
     public List<PlaceModel> getPlaces() {

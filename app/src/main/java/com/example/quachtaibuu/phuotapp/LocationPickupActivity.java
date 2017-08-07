@@ -21,7 +21,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.quachtaibuu.phuotapp.adapter.LocationSearchAdapter;
+import com.example.quachtaibuu.phuotapp.bus.LocationBus;
 import com.example.quachtaibuu.phuotapp.model.LocationModel;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
@@ -36,9 +43,29 @@ public class LocationPickupActivity extends AppCompatActivity {
     private EditText edSearch;
     private boolean isSearchIsOpened;
 
-    private List<LocationModel> locationModels;
+    private List<LocationModel> locationModels = new ArrayList<>();
     private ListView lvLocationPickupSearchResult;
     private LocationSearchAdapter locationSearchAdapter;
+
+    private final DatabaseReference DATABASE_REFERENCE = FirebaseDatabase.getInstance().getReference("locations");
+    private final Query QUERY = DATABASE_REFERENCE.orderByChild("name");
+    private final ValueEventListener VALUE_EVENT_LISTENER = new ValueEventListener() {
+        @Override
+        public void onDataChange(DataSnapshot dataSnapshot) {
+            locationModels.clear();
+            for (DataSnapshot data : dataSnapshot.getChildren()) {
+                LocationModel locationModel = data.getValue(LocationModel.class);
+                locationModel.setId(data.getKey());
+                locationModels.add(locationModel);
+            }
+            locationSearchAdapter.notifyDataSetChanged();
+        }
+
+        @Override
+        public void onCancelled(DatabaseError databaseError) {
+
+        }
+    };
 
 
     @Override
@@ -49,7 +76,6 @@ public class LocationPickupActivity extends AppCompatActivity {
         this.mToolBar = (Toolbar)findViewById(R.id.customToolBar);
         setSupportActionBar(this.mToolBar);
 
-        this.loadData();
         this.locationSearchAdapter = new LocationSearchAdapter(this, R.layout.item_search_location, this.locationModels);
         this.lvLocationPickupSearchResult = (ListView) findViewById(R.id.lvLocationPickupSearchResult);
         this.lvLocationPickupSearchResult.setAdapter(this.locationSearchAdapter);
@@ -62,12 +88,12 @@ public class LocationPickupActivity extends AppCompatActivity {
                 finish();
             }
         });
+        this.loadData();
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_search, menu);
-        //return super.onCreateOptionsMenu(menu);
         return true;
     }
 
@@ -97,8 +123,8 @@ public class LocationPickupActivity extends AppCompatActivity {
             inputMethodManager.hideSoftInputFromWindow(this.edSearch.getWindowToken(), 0);
 
             mSearchAction.setIcon(getResources().getDrawable(R.drawable.ic_search_black_24dp));
-
             this.isSearchIsOpened = false;
+            this.loadData();
         }else {
 
             actionBar.setDisplayShowCustomEnabled(true);
@@ -153,15 +179,11 @@ public class LocationPickupActivity extends AppCompatActivity {
 
     private void doSearch() {
         String strSearch = this.edSearch.getText().toString();
-        Toast.makeText(this, String.format("Tìm với %s", strSearch), Toast.LENGTH_SHORT).show();
+        this.QUERY.startAt(strSearch).endAt(strSearch + "\uF8FF").addListenerForSingleValueEvent(this.VALUE_EVENT_LISTENER);
     }
 
 
     private void loadData() {
-        this.locationModels = new ArrayList<>();
-        this.locationModels.add(new LocationModel("1", "An Giang", "Thất sơn huyền bí", R.drawable.loc_angiang));
-        this.locationModels.add(new LocationModel("2", "Bạc Liêu", "Xứ sở cơ cầu của Hắc công tử", R.drawable.loc_baclieu));
-        this.locationModels.add(new LocationModel("1", "An Giang", "Thất sơn huyền bí", R.drawable.loc_angiang));
-        this.locationModels.add(new LocationModel("2", "Bạc Liêu", "Xứ sở cơ cầu của Hắc công tử", R.drawable.loc_baclieu));
+        this.QUERY.addListenerForSingleValueEvent(this.VALUE_EVENT_LISTENER);
     }
 }
