@@ -1,5 +1,10 @@
 package com.example.quachtaibuu.phuotapp.model;
 
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+
 /**
  * Created by Quach Tai Buu on 2017-08-01.
  */
@@ -22,6 +27,12 @@ public class PlaceModel {
 
     private LocationModel location;
     private UserModel user;
+
+    private String address;
+    private String description;
+
+    private Map<String, Boolean> likes = new HashMap<>();
+    private Map<String, String> images = new HashMap<>();
 
     public PlaceModel() {
     }
@@ -172,6 +183,31 @@ public class PlaceModel {
         this.user = user;
     }
 
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public Map<String, Boolean> getLikes() {
+        return likes;
+    }
+
+    public void setLikes(Map<String, Boolean> likes) {
+        this.likes = likes;
+    }
+
+
     @Override
     public String toString() {
         return "PlaceModel{" +
@@ -189,5 +225,26 @@ public class PlaceModel {
                 //", location=" + location.toString() +
                 //", user=" + user.toString() +
                 '}';
+    }
+
+    public Map<String, String> getImages() {
+        return images;
+    }
+
+    public void setImages(Map<String, String> images) {
+        this.images = images;
+    }
+
+    public Map<String, Object> toMap() {
+        HashMap<String, Object> result = new HashMap<>();
+        result.put("title", this.title);
+        result.put("address", this.address);
+        result.put("description", this.description);
+        result.put("created", new Date().getTime());
+        result.put("latitude", this.latitude);
+        result.put("longitude", this.longitude);
+        result.put("location", location.toMap());
+        result.put("images", this.images);
+        return  result;
     }
 }

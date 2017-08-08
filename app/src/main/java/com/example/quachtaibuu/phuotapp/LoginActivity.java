@@ -2,25 +2,28 @@ package com.example.quachtaibuu.phuotapp;
 
 import android.Manifest;
 import android.content.Intent;
-import android.os.Handler;
+import android.graphics.Bitmap;
+import android.net.Uri;
+import android.os.AsyncTask;
+import android.os.Environment;
 import android.support.annotation.NonNull;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
-import android.util.SparseIntArray;
 import android.view.View;
-import android.widget.Button;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.animation.GlideAnimation;
+import com.bumptech.glide.request.target.SimpleTarget;
+import com.example.quachtaibuu.phuotapp.model.UserModel;
 import com.example.quachtaibuu.phuotapp.utils.AbsRuntimePermission;
+import com.example.quachtaibuu.phuotapp.utils.ImageUtils;
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
-import com.facebook.FacebookSdk;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
-import com.facebook.login.widget.LoginButton;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -28,6 +31,8 @@ import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
@@ -35,9 +40,18 @@ import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
-import com.google.gson.Gson;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.Arrays;
+import java.util.Date;
 
 public class LoginActivity extends AbsRuntimePermission {
 
@@ -56,6 +70,9 @@ public class LoginActivity extends AbsRuntimePermission {
     private FirebaseAuth mAuth;
     private GoogleApiClient mGoogleApiClient;
 
+    private DatabaseReference mDatabase;
+    private StorageReference mStorage;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -64,6 +81,9 @@ public class LoginActivity extends AbsRuntimePermission {
 
         this.mAuth = FirebaseAuth.getInstance();
         this.mCallbackManager = CallbackManager.Factory.create();
+        this.mDatabase = FirebaseDatabase.getInstance().getReference();
+        this.mStorage = FirebaseStorage.getInstance().getReference();
+
         LoginManager.getInstance().registerCallback(this.mCallbackManager, new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) {
@@ -103,7 +123,9 @@ public class LoginActivity extends AbsRuntimePermission {
     protected void onStart() {
         super.onStart();
         FirebaseUser user = this.mAuth.getCurrentUser();
-        showMainActivity(user);
+        if (user != null) {
+            showMainActivity(user);
+        }
     }
 
     @Override
@@ -120,7 +142,7 @@ public class LoginActivity extends AbsRuntimePermission {
                 // ...
                 Toast.makeText(this, "Lỗi! Không thể đăng nhập!", Toast.LENGTH_SHORT).show();
             }
-        }else {
+        } else {
             this.mCallbackManager.onActivityResult(requestCode, resultCode, data);
         }
     }
@@ -139,14 +161,12 @@ public class LoginActivity extends AbsRuntimePermission {
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d(TAG, "signInWithCredential:success");
-                            FirebaseUser user =  mAuth.getCurrentUser();
-                            showMainActivity(user);
+                            showMainActivity(task.getResult().getUser());
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w(TAG, "signInWithCredential:failure", task.getException());
                             Toast.makeText(LoginActivity.this, task.getException().getMessage().toString(),
                                     Toast.LENGTH_SHORT).show();
-                            showMainActivity(null);
                         }
                     }
                 });
@@ -165,13 +185,11 @@ public class LoginActivity extends AbsRuntimePermission {
 
                         if (task.isSuccessful()) {
                             Log.d(TAG, "signInWithCredential:success");
-                            FirebaseUser user = mAuth.getCurrentUser();
-                            showMainActivity(user);
+                            showMainActivity(task.getResult().getUser());
                         } else {
                             Log.w(TAG, "signInWithCredential:failure", task.getException());
                             Toast.makeText(LoginActivity.this, task.getException().getMessage().toString(),
                                     Toast.LENGTH_SHORT).show();
-                            showMainActivity(null);
                         }
                     }
                 });
@@ -188,10 +206,48 @@ public class LoginActivity extends AbsRuntimePermission {
         LoginManager.getInstance().logInWithReadPermissions(this, Arrays.asList("public_profile", "user_friends", "email"));
     }
 
-    private void showMainActivity(FirebaseUser user) {
-        if(user != null && !user.isAnonymous()) {
-            Intent intent = new Intent(this, MainActivity.class);
-            startActivity(intent);
+    private void showMainActivity(final FirebaseUser user) {
+
+        final UserModel userModel = new UserModel(user.getDisplayName(), user.getEmail(), usernameFromEmail(user.getEmail()), null);
+
+        ImageUtils.getFileFromUrl(this, user.getPhotoUrl(), new ImageUtils.OnGetFileListener() {
+            @Override
+            public void OnComplete(final File file) {
+
+                final String imgName = user.getUid() + ".jpg";
+                final String imgPath = "/img_avatar/" + imgName;
+
+                mStorage = mStorage.child(imgPath);
+                UploadTask uploadTask = mStorage.putFile(Uri.fromFile(file));
+
+                uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                        userModel.setPhotoUrl(imgPath);
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.d("Storage Failure", e.getMessage());
+                    }
+                }).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
+                        mDatabase.child("users").child(user.getUid()).setValue(userModel);
+                        file.delete();
+                    }
+                });
+            }
+        });
+
+        startActivity(new Intent(LoginActivity.this, MainActivity.class));
+    }
+
+    private String usernameFromEmail(String email) {
+        if (email.contains("@")) {
+            return email.split("@")[0];
+        } else {
+            return email;
         }
     }
 

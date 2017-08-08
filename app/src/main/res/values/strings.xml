@@ -47,6 +47,8 @@
 
     <string name="msgRequestPermission">Vui lòng cấp phép truy cập</string>
     <string name="msgRequestGrant">Cấp phép</string>
+    <string name="msgSuccessInsertedForPlace">Thông tin địa điểm đã được thêm!</string>
+    <string name="msgLoading">Đang xử lý thông tin...</string>
     <string name="msgUnableLoadImage">Không thể tải hình ảnh</string>
 
     <string name="titleChooseImage">Chọn hình ảnh</string>

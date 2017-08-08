@@ -8,45 +8,33 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
+import com.google.firebase.database.IgnoreExtraProperties;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Quach Tai Buu on 2017-08-07.
  */
 
+@IgnoreExtraProperties
 public class UserModel {
-    private String uid;
     private String displayName;
     private String email;
-    private Uri photoUrl;
-    private List<PlaceModel> places = new ArrayList<>();
+    private String username;
+    //private Uri photoUrl;
+    private String photoUrl;
 
     public UserModel() {
     }
 
-    public UserModel(String uid, String displayName, String email, Uri photoUrl) {
-        this.uid = uid;
+    public UserModel(String displayName, String email, String username, String photoUrl) {
         this.displayName = displayName;
         this.email = email;
+        this.username = username;
         this.photoUrl = photoUrl;
-    }
-
-    public UserModel(String uid, String displayName, String email, Uri photoUrl, List<PlaceModel> places) {
-        this.uid = uid;
-        this.displayName = displayName;
-        this.email = email;
-        this.photoUrl = photoUrl;
-        this.places = places;
-    }
-
-    public String getUid() {
-        return uid;
-    }
-
-    public void setUid(String uid) {
-        this.uid = uid;
     }
 
     public String getDisplayName() {
@@ -65,30 +53,38 @@ public class UserModel {
         this.email = email;
     }
 
-    public Uri getPhotoUrl() {
+    public String getPhotoUrl() {
         return photoUrl;
     }
 
-    public void setPhotoUrl(Uri photoUrl) {
+    public void setPhotoUrl(String photoUrl) {
         this.photoUrl = photoUrl;
     }
 
-    public List<PlaceModel> getPlaces() {
-        return places;
+    public String getUsername() {
+        return username;
     }
 
-    public void setPlaces(List<PlaceModel> places) {
-        this.places = places;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
-    @Override
-    public String toString() {
-        return "UserModel{" +
-                "uid='" + uid + '\'' +
-                ", displayName='" + displayName + '\'' +
-                ", email='" + email + '\'' +
-                ", photoUrl=" + photoUrl +
-                ", place=" + places.toString() +
-                '}';
-    }
+//    @Override
+//    public String toString() {
+//        return "UserModel{" +
+//                "displayName='" + displayName + '\'' +
+//                ", email='" + email + '\'' +
+//                ", username='" + username + '\'' +
+//                ", photoUrl=" + photoUrl +
+//                '}';
+//    }
+//
+//    public Map<String, Object> toMap() {
+//        HashMap<String, Object> result = new HashMap<>();
+//        result.put("displayName", this.displayName);
+//        result.put("email", this.email);
+//        result.put("username", this.username);
+//        result.put("photoUrl", this.photoUrl);
+//        return result;
+//    }
 }

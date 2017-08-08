@@ -18,7 +18,7 @@ public class BaseActivity extends AppCompatActivity {
         if(this.mProgressDialog == null) {
             this.mProgressDialog = new ProgressDialog(this);
             this.mProgressDialog.setCancelable(false);
-            this.mProgressDialog.setMessage("Loading...");
+            this.mProgressDialog.setMessage(getString(R.string.msgLoading));
         }
         this.mProgressDialog.show();
     }

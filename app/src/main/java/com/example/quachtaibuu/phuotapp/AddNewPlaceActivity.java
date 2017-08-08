@@ -12,6 +12,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
@@ -37,14 +38,19 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.example.quachtaibuu.phuotapp.adapter.BitmapRecyclerViewAdapter;
 import com.example.quachtaibuu.phuotapp.model.LocationModel;
+import com.example.quachtaibuu.phuotapp.model.PlaceModel;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -53,10 +59,13 @@ import com.google.gson.Gson;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
-public class AddNewPlaceActivity extends AppCompatActivity implements OnMapReadyCallback, LocationListener {
+public class AddNewPlaceActivity extends BaseActivity implements OnMapReadyCallback, LocationListener {
 
     private final int PICK_IMAGE_REQUEST = 1;
     private final int PICK_LOCATION_REQUEST = 10;
@@ -66,6 +75,7 @@ public class AddNewPlaceActivity extends AppCompatActivity implements OnMapReady
     private LocationManager locationManager;
     private LatLng currentLatLng;
     private TextView tvAddNewPlaceLocationPickupName;
+    private EditText edAddNewPlaceName;
     private EditText edAddNewPlaceAddress;
     private EditText edAddNewPlacePhone;
     private EditText edAddNewPlaceDescription;
@@ -76,6 +86,7 @@ public class AddNewPlaceActivity extends AppCompatActivity implements OnMapReady
     private RecyclerView.LayoutManager layoutManager;
 
     private LocationModel locationModelPickup;
+    private DatabaseReference mDatabase;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,11 +101,14 @@ public class AddNewPlaceActivity extends AppCompatActivity implements OnMapReady
         actionBar.setHomeButtonEnabled(true);
         actionBar.setDisplayHomeAsUpEnabled(true);
 
+        this.mDatabase = FirebaseDatabase.getInstance().getReference();
+
         this.tvAddNewPlaceLocationPickupName = (TextView) findViewById(R.id.tvAddNewPlaceLocationPickupName);
 
         this.edAddNewPlaceAddress = (EditText) findViewById(R.id.edAddNewPlaceAddress);
         this.edAddNewPlaceDescription = (EditText) findViewById(R.id.edAddNewPlaceDescription);
         this.edAddNewPlacePhone = (EditText) findViewById(R.id.edAddNewPlacePhone);
+        this.edAddNewPlaceName = (EditText) findViewById(R.id.edAddNewPlaceName);
 
         this.bitmapRecyclerViewAdapter = new BitmapRecyclerViewAdapter();
         this.bitmapRecyclerViewAdapter.setOnButtonClickListener(new BitmapRecyclerViewAdapter.OnButtonClickListener() {
@@ -121,31 +135,79 @@ public class AddNewPlaceActivity extends AppCompatActivity implements OnMapReady
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menuAddNewPlaceAdd:
-                FirebaseStorage storage = FirebaseStorage.getInstance();
-                StorageReference storageRef = storage.getReference();
 
-                for(Uri imgUri: this.lstUriImageChoosen) {
+                showProgressDialog();
+
+                FirebaseStorage storage = FirebaseStorage.getInstance();
+                final StorageReference storageRef = storage.getReference();
+                final List<String> images = new ArrayList<>();
+                final Map<String, String> placeImages = new HashMap<>();
+
+
+                final String title = edAddNewPlaceName.getText().toString();
+                final String address = edAddNewPlaceAddress.getText().toString();
+                final String description = edAddNewPlaceDescription.getText().toString();
+                final double latitude = this.currentLatLng.latitude;
+                final double longtitude = this.currentLatLng.longitude;
+
+                for(Uri imgUri: lstUriImageChoosen) {
                     final String imgName = imgUri.getLastPathSegment();
-                    StorageReference ref = storageRef.child("/img_places/" + imgName);
+                    final String imgPath = String.format("/img_places/%s_%s", new Date().getTime(), imgName);
+
+                    StorageReference ref = storageRef.child(imgPath);
                     UploadTask uploadTask = ref.putFile(imgUri);
 
                     uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                         @Override
                         public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                            taskSnapshot.getDownloadUrl();
-                            Toast.makeText(AddNewPlaceActivity.this, taskSnapshot.getDownloadUrl().getPath(), Toast.LENGTH_SHORT).show();
+                            placeImages.put(Integer.toString(placeImages.size() + 1), imgPath);
+                            if(placeImages.size() == lstUriImageChoosen.size()) {
+                                DatabaseReference reference = mDatabase.child("places");
+                                String key = reference.push().getKey();
+
+                                PlaceModel placeModel = new PlaceModel();
+                                placeModel.setAddress(address);
+                                placeModel.setDescription(description);
+                                placeModel.setTitle(title);
+                                placeModel.setLatitude(latitude);
+                                placeModel.setLongitude(longtitude);
+                                placeModel.setImages(placeImages);
+                                placeModel.setLocation(locationModelPickup);
+
+                                Map<String, Object> placeValues = placeModel.toMap();
+
+                                Map<String, Object> childUpdates = new HashMap<>();
+                                childUpdates.put("/places/" + key, placeModel.toMap());
+                                childUpdates.put("/user-places/" + getUserId() + "/" + key, placeValues);
+                                childUpdates.put("/location-places/" + locationModelPickup.getId() + "/" + key, placeValues);
+
+                                mDatabase.updateChildren(childUpdates);
+
+                                Toast.makeText(AddNewPlaceActivity.this, getString(R.string.msgSuccessInsertedForPlace), Toast.LENGTH_SHORT).show();
+                                finish();
+                            }
                         }
                     }).addOnFailureListener(new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull Exception e) {
-                            Log.d(String.format("Storage %s Failure", imgName), e.getMessage());
+                            Toast.makeText(AddNewPlaceActivity.this, e.getMessage(), Toast.LENGTH_LONG).show();
+                        }
+                    }).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
+                            hideProgressDialog();
                         }
                     });
                 }
-                Toast.makeText(this, "Thêm thông tin địa điểm", Toast.LENGTH_SHORT).show();
+
                 break;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+
+    private void addNewPlace() {
+
     }
 
     @Override

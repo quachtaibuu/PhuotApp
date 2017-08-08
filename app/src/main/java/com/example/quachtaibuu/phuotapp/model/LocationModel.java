@@ -1,7 +1,9 @@
 package com.example.quachtaibuu.phuotapp.model;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Quach Tai Buu on 2017-07-31.
@@ -16,6 +18,7 @@ public class LocationModel {
     private List<PlaceModel> places = new ArrayList<>();
     private double latitude;
     private double longtitude;
+    private Map<String, String> images = new HashMap<>();
 
     public LocationModel() {
     }
@@ -91,6 +94,18 @@ public class LocationModel {
         this.places = places;
     }
 
+    public void setLongtitude(double longtitude) {
+        this.longtitude = longtitude;
+    }
+
+    public Map<String, String> getImages() {
+        return images;
+    }
+
+    public void setImages(Map<String, String> images) {
+        this.images = images;
+    }
+
     @Override
     public String toString() {
         return "LocationModel{" +
@@ -100,5 +115,17 @@ public class LocationModel {
                 ", image=" + image +
                 ", places=" + places.toString() +
                 '}';
+    }
+
+    public Map<String, Object> toMap() {
+        HashMap<String, Object> result = new HashMap<>();
+
+        result.put("name", this.name);
+        result.put("description", this.description);
+        result.put("latitude", this.latitude);
+        result.put("longtitude", this.longtitude);
+        result.put("images", this.images);
+
+        return result;
     }
 }
