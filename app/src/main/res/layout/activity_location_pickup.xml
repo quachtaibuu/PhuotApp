@@ -10,9 +10,14 @@
     <include android:id="@+id/customToolBar"
         layout="@layout/action_bar_search_custom"></include>
 
-    <ListView
-        android:id="@+id/lvLocationPickupSearchResult"
+    <!--<ListView-->
+        <!--android:id="@+id/lvLocationPickupSearchResult"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent" />-->
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rcvLocationsPickup"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"></android.support.v7.widget.RecyclerView>
 
 </LinearLayout>

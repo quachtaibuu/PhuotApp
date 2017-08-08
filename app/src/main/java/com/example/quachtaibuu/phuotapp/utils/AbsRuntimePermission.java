@@ -16,13 +16,14 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.SparseIntArray;
 import android.view.View;
 
+import com.example.quachtaibuu.phuotapp.BaseActivity;
 import com.example.quachtaibuu.phuotapp.R;
 
 /**
  * Created by Quach Tai Buu on 2017-08-01.
  */
 
-public abstract class AbsRuntimePermission extends AppCompatActivity {
+public abstract class AbsRuntimePermission extends BaseActivity {
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState, @Nullable PersistableBundle persistentState) {

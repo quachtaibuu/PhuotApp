@@ -6,6 +6,9 @@ import android.os.Handler;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.DividerItemDecoration;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -22,7 +25,10 @@ import android.widget.Toast;
 
 import com.example.quachtaibuu.phuotapp.adapter.LocationSearchAdapter;
 import com.example.quachtaibuu.phuotapp.bus.LocationBus;
+import com.example.quachtaibuu.phuotapp.holder.LocationPickupViewHolder;
+import com.example.quachtaibuu.phuotapp.holder.LocationRecyclerViewHolder;
 import com.example.quachtaibuu.phuotapp.model.LocationModel;
+import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -30,6 +36,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.google.gson.Gson;
+
+import org.apache.commons.lang3.text.WordUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,29 +51,12 @@ public class LocationPickupActivity extends AppCompatActivity {
     private EditText edSearch;
     private boolean isSearchIsOpened;
 
-    private List<LocationModel> locationModels = new ArrayList<>();
-    private ListView lvLocationPickupSearchResult;
-    private LocationSearchAdapter locationSearchAdapter;
+    private RecyclerView rcvLocationsPicup;
+    private LinearLayoutManager layoutManager;
 
-    private final DatabaseReference DATABASE_REFERENCE = FirebaseDatabase.getInstance().getReference("locations");
-    private final Query QUERY = DATABASE_REFERENCE.orderByChild("name");
-    private final ValueEventListener VALUE_EVENT_LISTENER = new ValueEventListener() {
-        @Override
-        public void onDataChange(DataSnapshot dataSnapshot) {
-            locationModels.clear();
-            for (DataSnapshot data : dataSnapshot.getChildren()) {
-                LocationModel locationModel = data.getValue(LocationModel.class);
-                locationModel.setId(data.getKey());
-                locationModels.add(locationModel);
-            }
-            locationSearchAdapter.notifyDataSetChanged();
-        }
-
-        @Override
-        public void onCancelled(DatabaseError databaseError) {
-
-        }
-    };
+    private final DatabaseReference mDatabaseReference = FirebaseDatabase.getInstance().getReference("locations");
+    private Query mPostQuery = mDatabaseReference.orderByChild("name");
+    private FirebaseRecyclerAdapter mAdapter;
 
 
     @Override
@@ -73,22 +64,67 @@ public class LocationPickupActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_location_pickup);
 
-        this.mToolBar = (Toolbar)findViewById(R.id.customToolBar);
+        this.mToolBar = (Toolbar) findViewById(R.id.customToolBar);
         setSupportActionBar(this.mToolBar);
 
-        this.locationSearchAdapter = new LocationSearchAdapter(this, R.layout.item_search_location, this.locationModels);
-        this.lvLocationPickupSearchResult = (ListView) findViewById(R.id.lvLocationPickupSearchResult);
-        this.lvLocationPickupSearchResult.setAdapter(this.locationSearchAdapter);
-        this.lvLocationPickupSearchResult.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        this.rcvLocationsPicup = (RecyclerView) findViewById(R.id.rcvLocationsPickup);
+
+//        this.mPostQuery = this.mPostQuery.startAt(strSearch).endAt(strSearch + "\uF8FF");
+//
+//        this.mAdapter = new FirebaseRecyclerAdapter<LocationModel, LocationPickupViewHolder>(LocationModel.class, R.layout.item_search_location, LocationPickupViewHolder.class, this.mPostQuery) {
+//            @Override
+//            protected void populateViewHolder(LocationPickupViewHolder viewHolder, final LocationModel model, int position) {
+//                DatabaseReference ref = getRef(position);
+//
+//                viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View view) {
+//                        Intent intent = new Intent(LocationPickupActivity.this, AddNewPlaceActivity.class);
+//                        intent.putExtra("location", new Gson().toJson(model));
+//                        setResult(RESULT_OK, intent);
+//                        finish();
+//                    }
+//                });
+//
+//                viewHolder.bindToLocation(model);
+//            }
+//        } ;
+
+        this.layoutManager = new LinearLayoutManager(this);
+
+        this.rcvLocationsPicup.setLayoutManager(this.layoutManager);
+        this.rcvLocationsPicup.addItemDecoration(new DividerItemDecoration(this, this.layoutManager.getOrientation()));
+        this.rcvLocationsPicup.setAdapter(this.mAdapter);
+        this.loadData(this.mPostQuery);
+    }
+
+
+    public void loadData(Query query) {
+        if (this.mAdapter != null) {
+            this.mAdapter.cleanup();
+        }
+
+        this.mAdapter = new FirebaseRecyclerAdapter<LocationModel, LocationPickupViewHolder>(LocationModel.class, R.layout.item_search_location, LocationPickupViewHolder.class, query) {
             @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-                Intent intent = new Intent(LocationPickupActivity.this, AddNewPlaceActivity.class);
-                intent.putExtra("location", new Gson().toJson(adapterView.getItemAtPosition(position)));
-                setResult(RESULT_OK, intent);
-                finish();
+            protected void populateViewHolder(LocationPickupViewHolder viewHolder, final LocationModel model, int position) {
+                DatabaseReference ref = getRef(position);
+
+                viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Intent intent = new Intent(LocationPickupActivity.this, AddNewPlaceActivity.class);
+                        intent.putExtra("location", new Gson().toJson(model));
+                        setResult(RESULT_OK, intent);
+                        finish();
+                    }
+                });
+
+                viewHolder.bindToLocation(model);
             }
-        });
-        this.loadData();
+        };
+
+        this.rcvLocationsPicup.setAdapter(this.mAdapter);
+
     }
 
     @Override
@@ -115,7 +151,7 @@ public class LocationPickupActivity extends AppCompatActivity {
 
     private void handleMenuSearch() {
         ActionBar actionBar = getSupportActionBar();
-        if(this.isSearchIsOpened) {
+        if (this.isSearchIsOpened) {
             actionBar.setDisplayShowCustomEnabled(false);
             actionBar.setDisplayShowTitleEnabled(true);
 
@@ -124,14 +160,14 @@ public class LocationPickupActivity extends AppCompatActivity {
 
             mSearchAction.setIcon(getResources().getDrawable(R.drawable.ic_search_black_24dp));
             this.isSearchIsOpened = false;
-            this.loadData();
-        }else {
+            this.loadData(this.mPostQuery);
+        } else {
 
             actionBar.setDisplayShowCustomEnabled(true);
             actionBar.setDisplayShowTitleEnabled(false);
             actionBar.setCustomView(R.layout.search_bar);
 
-            this.edSearch = (EditText)findViewById(R.id.edSearch);
+            this.edSearch = (EditText) findViewById(R.id.edSearch);
             this.edSearch.setOnEditorActionListener(new TextView.OnEditorActionListener() {
                 @Override
                 public boolean onEditorAction(TextView textView, int actionId, KeyEvent keyEvent) {
@@ -162,12 +198,12 @@ public class LocationPickupActivity extends AppCompatActivity {
                             doSearch();
                         }
                     };
-                    this.handler.postDelayed(this.runnable, 500);
+                    this.handler.postDelayed(this.runnable, 1000);
                 }
             });
 
             this.edSearch.requestFocus();
-            InputMethodManager inputMethodManager = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+            InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
             inputMethodManager.showSoftInput(this.edSearch, InputMethodManager.SHOW_IMPLICIT);
 
             this.mSearchAction.setIcon(getResources().getDrawable(R.drawable.ic_close_black_24dp));
@@ -178,12 +214,20 @@ public class LocationPickupActivity extends AppCompatActivity {
 
 
     private void doSearch() {
-        String strSearch = this.edSearch.getText().toString();
-        this.QUERY.startAt(strSearch).endAt(strSearch + "\uF8FF").addListenerForSingleValueEvent(this.VALUE_EVENT_LISTENER);
+        String strSearch = WordUtils.capitalize(this.edSearch.getText().toString().toLowerCase());
+        Query mPostQuery = this.mPostQuery.startAt(strSearch).endAt(strSearch + "\uF8FF");
+        this.loadData(mPostQuery);
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        //this.mDatabaseReference.addListenerForSingleValueEvent(this.VALUE_EVENT_LISTENER);
+    }
 
-    private void loadData() {
-        this.QUERY.addListenerForSingleValueEvent(this.VALUE_EVENT_LISTENER);
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        this.mAdapter.cleanup();
     }
 }
