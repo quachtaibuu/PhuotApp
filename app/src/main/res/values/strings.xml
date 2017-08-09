@@ -55,5 +55,7 @@
 
     <string name="tvPlaceDetailAddressTitle">Thông tin liên lạc</string>
     <string name="tvPlaceDetailDescriptionTitle">Mô tả địa điểm</string>
+    <string name="tvPlaceDetailDistance">Khoảng cách</string>
+    <string name="tvPlaceDetailDuration">Thời gian</string>
 
 </resources>

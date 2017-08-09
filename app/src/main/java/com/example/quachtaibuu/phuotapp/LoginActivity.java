@@ -40,8 +40,11 @@ import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -208,9 +211,30 @@ public class LoginActivity extends AbsRuntimePermission {
 
     private void showMainActivity(final FirebaseUser user) {
 
+        if (user != null) {
+
+            mDatabase.child("users").child(user.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    if (!dataSnapshot.exists()) {
+                        doRegister(user);
+                    }else {
+                        startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                    }
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+        }
+    }
+
+    private void doRegister(final FirebaseUser user) {
         final UserModel userModel = new UserModel(user.getDisplayName(), user.getEmail(), usernameFromEmail(user.getEmail()), null);
 
-        ImageUtils.getFileFromUrl(this, user.getPhotoUrl(), new ImageUtils.OnGetFileListener() {
+        ImageUtils.getFileFromUrl(LoginActivity.this, user.getPhotoUrl(), new ImageUtils.OnGetFileListener() {
             @Override
             public void OnComplete(final File file) {
 
@@ -233,14 +257,27 @@ public class LoginActivity extends AbsRuntimePermission {
                 }).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
-                        mDatabase.child("users").child(user.getUid()).setValue(userModel);
-                        file.delete();
+                        mDatabase.child("users").child(user.getUid()).setValue(userModel).addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                                //Continue with profile edit activity
+                            }
+                        }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Toast.makeText(LoginActivity.this, "Unable to register your account", Toast.LENGTH_LONG).show();
+                            }
+                        }).addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                file.delete();
+                            }
+                        });
                     }
                 });
             }
         });
-
-        startActivity(new Intent(LoginActivity.this, MainActivity.class));
     }
 
     private String usernameFromEmail(String email) {

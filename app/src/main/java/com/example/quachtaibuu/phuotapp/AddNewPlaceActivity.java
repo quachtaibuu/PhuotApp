@@ -141,8 +141,6 @@ public class AddNewPlaceActivity extends BaseActivity implements OnMapReadyCallb
                 FirebaseStorage storage = FirebaseStorage.getInstance();
                 final StorageReference storageRef = storage.getReference();
                 final List<String> images = new ArrayList<>();
-                final Map<String, String> placeImages = new HashMap<>();
-
 
                 final String title = edAddNewPlaceName.getText().toString();
                 final String address = edAddNewPlaceAddress.getText().toString();
@@ -160,8 +158,8 @@ public class AddNewPlaceActivity extends BaseActivity implements OnMapReadyCallb
                     uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                         @Override
                         public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                            placeImages.put("img_" + placeImages.size(), imgPath);
-                            if(placeImages.size() == lstUriImageChoosen.size()) {
+                            images.add(imgPath);
+                            if(images.size() == lstUriImageChoosen.size()) {
                                 DatabaseReference reference = mDatabase.child("places");
                                 String key = reference.push().getKey();
 
@@ -171,7 +169,7 @@ public class AddNewPlaceActivity extends BaseActivity implements OnMapReadyCallb
                                 placeModel.setTitle(title);
                                 placeModel.setLatitude(latitude);
                                 placeModel.setLongitude(longtitude);
-                                placeModel.setImages(placeImages);
+                                placeModel.setImages(images);
                                 placeModel.setLocation(locationModelPickup);
                                 placeModel.setUser(getCurrentUser());
 

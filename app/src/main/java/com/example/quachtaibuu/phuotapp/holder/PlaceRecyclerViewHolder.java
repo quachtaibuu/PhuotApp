@@ -30,6 +30,15 @@ public class PlaceRecyclerViewHolder extends RecyclerView.ViewHolder {
     public ImageView imgItemPlace;
     public ImageView imgItemUserImage;
 
+    public Button btnItemNewsLike;
+    public Button btnItemNewsComment;
+
+    public interface OnButtonClickListenser {
+        void ButtonLike_OnClick();
+
+        void ButtonComment_OnClick();
+    }
+
     public PlaceRecyclerViewHolder(View itemView) {
         super(itemView);
         this.tvItemNewsUserId = (TextView) itemView.findViewById(R.id.tvItemNewsUserId);
@@ -39,24 +48,40 @@ public class PlaceRecyclerViewHolder extends RecyclerView.ViewHolder {
         this.tvItemNewsTitle = (TextView) itemView.findViewById(R.id.tvItemNewsTitle);
         this.imgItemPlace = (ImageView) itemView.findViewById(R.id.imgItemNewsPlace);
         this.imgItemUserImage = (ImageView) itemView.findViewById(R.id.imgItemUserImage);
+
+        this.btnItemNewsLike = (Button) itemView.findViewById(R.id.btnItemNewsLike);
+        this.btnItemNewsComment = (Button) itemView.findViewById(R.id.btnItemNewsComment);
     }
 
 
-    public void bindToPlace(PlaceModel model) {
+    public void bindToPlace(PlaceModel model, final OnButtonClickListenser onButtonClickListenser) {
         StorageReference storageRef = FirebaseStorage.getInstance().getReference();
 
         this.tvItemNewsUserId.setText(model.getUser().getDisplayName());
         this.tvItemNewsCreated.setText((new Date(model.getCreated())).toString());
-        //this.tvItemNewsLike.setText(Integer.toString(model.getCountLike()));
+        this.tvItemNewsLike.setText(Integer.toString(model.getCountLike()));
         this.tvItemNewsLocation.setText(model.getLocation().getName());
         this.tvItemNewsTitle.setText(model.getTitle());
         Glide.with(itemView.getContext())
                 .using(new FirebaseImageLoader())
-                .load(storageRef.child(model.getImages().get("img_0")))
+                .load(storageRef.child(model.getImages().get(model.getImages().size() - 1)))
                 .into(imgItemPlace);
         Glide.with(itemView.getContext())
                 .using(new FirebaseImageLoader())
                 .load(storageRef.child(model.getUser().getPhotoUrl()))
                 .into(imgItemUserImage);
+
+        this.btnItemNewsLike.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onButtonClickListenser.ButtonLike_OnClick();
+            }
+        });
+        this.btnItemNewsComment.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onButtonClickListenser.ButtonComment_OnClick();
+            }
+        });
     }
 }

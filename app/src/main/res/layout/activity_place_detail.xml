@@ -34,6 +34,7 @@
                         android:layout_alignParentBottom="true" />
 
                     <android.support.design.widget.FloatingActionButton
+                        android:id="@+id/btnPlaceDetailLike"
                         android:layout_width="48dp"
                         android:layout_height="48dp"
                         android:layout_alignParentBottom="true"
@@ -91,9 +92,55 @@
                         android:drawableLeft="@drawable/ic_place_black_24dp"
                         android:drawableTint="@android:color/darker_gray"
                         android:drawablePadding="5dp"
-                        android:padding="10dp"
+                        android:paddingLeft="10dp"
+                        android:paddingRight="10dp"
+                        android:paddingTop="10dp"
+                        android:paddingBottom="5dp"
                         android:gravity="center_vertical"
                         android:text="Nguyễn Văn Thoại, TP. Châu Đốc, An Giang" />
+
+                    <TableLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <TableRow>
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:drawableLeft="@drawable/ic_directions_black_24dp"
+                                android:drawableTint="@android:color/darker_gray"
+                                android:drawablePadding="5dp"
+                                android:text="@string/tvPlaceDetailDistance"
+                                android:paddingLeft="10dp"
+                                android:paddingRight="15dp"
+                                android:paddingTop="5dp"
+                                android:paddingBottom="10dp"
+                                android:gravity="center_vertical"/>
+                            <TextView
+                                android:id="@+id/tvPlaceDetailDistance"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="- km"
+                                android:textStyle="bold"/>
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/tvPlaceDetailDuration"
+                                android:paddingLeft="15dp"
+                                android:paddingRight="15dp"
+                                android:paddingTop="5dp"
+                                android:paddingBottom="10dp"/>
+                            <TextView
+                                android:id="@+id/tvPlaceDetailDuration"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="- phút"
+                                android:textStyle="bold"/>
+
+                        </TableRow>
+
+                    </TableLayout>
 
                 </LinearLayout>
 

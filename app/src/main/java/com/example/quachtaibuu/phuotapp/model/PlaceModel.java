@@ -1,5 +1,7 @@
 package com.example.quachtaibuu.phuotapp.model;
 
+import com.google.firebase.database.IgnoreExtraProperties;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -14,15 +16,10 @@ import java.util.Objects;
 public class PlaceModel {
 
     private String title;
-    private int userImage;
-    private String username;
     private long created;
-    private String locationName;
-    private int placeImage;
 
     private int countLike;
     private int countComment;
-    private int getCountShare;
 
     private double latitude;
     private double longitude;
@@ -34,52 +31,8 @@ public class PlaceModel {
     private String description;
 
     private Map<String, Boolean> likes = new HashMap<>();
-    private Map<String, String> images = new HashMap<>();
+    private List<String> images = new ArrayList<>();
 
-    public PlaceModel() {
-    }
-
-    public PlaceModel(String title, int userImage, String username, long created, String locationName, int placeImage, int countLike, int countComment, int getCountShare) {
-        this.title = title;
-        this.userImage = userImage;
-        this.username = username;
-        this.created = created;
-        this.locationName = locationName;
-        this.placeImage = placeImage;
-        this.countLike = countLike;
-        this.countComment = countComment;
-        this.getCountShare = getCountShare;
-    }
-
-    public PlaceModel(String title, int userImage, String username, long created, String locationName, int placeImage, int countLike, int countComment, int getCountShare, double latitude, double longitude) {
-        this.title = title;
-        this.userImage = userImage;
-        this.username = username;
-        this.created = created;
-        this.locationName = locationName;
-        this.placeImage = placeImage;
-        this.countLike = countLike;
-        this.countComment = countComment;
-        this.getCountShare = getCountShare;
-        this.latitude = latitude;
-        this.longitude = longitude;
-    }
-
-    public PlaceModel(String title, int userImage, String username, long created, String locationName, int placeImage, int countLike, int countComment, int getCountShare, double latitude, double longitude, LocationModel location, UserModel user) {
-        this.title = title;
-        this.userImage = userImage;
-        this.username = username;
-        this.created = created;
-        this.locationName = locationName;
-        this.placeImage = placeImage;
-        this.countLike = countLike;
-        this.countComment = countComment;
-        this.getCountShare = getCountShare;
-        this.latitude = latitude;
-        this.longitude = longitude;
-        this.location = location;
-        this.user = user;
-    }
 
     public String getTitle() {
         return title;
@@ -89,44 +42,12 @@ public class PlaceModel {
         this.title = title;
     }
 
-    public int getUserImage() {
-        return userImage;
-    }
-
-    public void setUserImage(int userImage) {
-        this.userImage = userImage;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
     public long getCreated() {
         return created;
     }
 
     public void setCreated(long created) {
         this.created = created;
-    }
-
-    public String getLocationName() {
-        return locationName;
-    }
-
-    public void setLocationName(String locationName) {
-        this.locationName = locationName;
-    }
-
-    public int getPlaceImage() {
-        return placeImage;
-    }
-
-    public void setPlaceImage(int placeImage) {
-        this.placeImage = placeImage;
     }
 
     public int getCountLike() {
@@ -143,14 +64,6 @@ public class PlaceModel {
 
     public void setCountComment(int countComment) {
         this.countComment = countComment;
-    }
-
-    public int getGetCountShare() {
-        return getCountShare;
-    }
-
-    public void setGetCountShare(int getCountShare) {
-        this.getCountShare = getCountShare;
     }
 
     public double getLatitude() {
@@ -209,32 +122,30 @@ public class PlaceModel {
         this.likes = likes;
     }
 
+    public List<String> getImages() {
+        return images;
+    }
+
+    public void setImages(List<String> images) {
+        this.images = images;
+    }
 
     @Override
     public String toString() {
         return "PlaceModel{" +
                 "title='" + title + '\'' +
-                ", userImage=" + userImage +
-                ", username='" + username + '\'' +
-                ", created='" + created + '\'' +
-                ", locationName='" + locationName + '\'' +
-                ", placeImage=" + placeImage +
+                ", created=" + created +
                 ", countLike=" + countLike +
                 ", countComment=" + countComment +
-                ", getCountShare=" + getCountShare +
                 ", latitude=" + latitude +
                 ", longitude=" + longitude +
-                //", location=" + location.toString() +
-                //", user=" + user.toString() +
+                ", location=" + location +
+                ", user=" + user +
+                ", address='" + address + '\'' +
+                ", description='" + description + '\'' +
+                ", likes=" + likes +
+                ", images=" + images +
                 '}';
-    }
-
-    public Map<String, String> getImages() {
-        return images;
-    }
-
-    public void setImages(Map<String, String> images) {
-        this.images = images;
     }
 
     public Map<String, Object> toMap() {
@@ -251,11 +162,11 @@ public class PlaceModel {
         return  result;
     }
 
-    public List<String> getImagesAsList() {
-        List<String> result = new ArrayList<>();
-        for(Map.Entry<String, String> entry: this.getImages().entrySet()) {
-            result.add(entry.getValue());
-        }
-        return  result;
-    }
+//    public List<String> getImagesAsList() {
+//        List<String> result = new ArrayList<>();
+//        for(Map.Entry<String, String> entry: this.getImages().entrySet()) {
+//            result.add(entry.getValue());
+//        }
+//        return  result;
+//    }
 }
