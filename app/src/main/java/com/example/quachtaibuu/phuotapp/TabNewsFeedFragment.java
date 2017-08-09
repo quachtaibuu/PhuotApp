@@ -48,7 +48,7 @@ public class TabNewsFeedFragment extends Fragment {
 
         //this.loadData();
         this.mDatabase = FirebaseDatabase.getInstance().getReference("places");
-        Query postQuery = this.mDatabase.orderByChild("created");
+        Query postQuery = this.mDatabase.orderByChild("created").limitToFirst(100);
 
         this.mAdapter = new FirebaseRecyclerAdapter<PlaceModel, PlaceRecyclerViewHolder>(PlaceModel.class, R.layout.item_news, PlaceRecyclerViewHolder.class, postQuery) {
 
@@ -62,14 +62,26 @@ public class TabNewsFeedFragment extends Fragment {
                     public Transaction.Result doTransaction(MutableData mutableData) {
                         UserModel userModel = mutableData.child("user").getValue(UserModel.class);
                         LocationModel locationModel = mutableData.child("location").getValue(LocationModel.class);
+
                         model.setUser(userModel);
                         model.setLocation(locationModel);
-                        return null;
+
+                        return Transaction.success(mutableData);
                     }
 
                     @Override
                     public void onComplete(DatabaseError databaseError, boolean b, DataSnapshot dataSnapshot) {
                         viewHolder.bindToPlace(model);
+                        viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                Intent intent = new Intent(getContext(), PlaceDetailActivity.class);
+                                intent.putExtra(PlaceDetailActivity.EXTRA_PLACE_KEY, ref.getKey());
+                                startActivity(intent);
+                            }
+                        });
+                        rcvNewsFeeds.smoothScrollToPosition(mAdapter.getItemCount() - 1);
+                        layoutManager.scrollToPosition(mAdapter.getItemCount() - 1);
                     }
                 });
 
@@ -86,8 +98,10 @@ public class TabNewsFeedFragment extends Fragment {
     }
 
     @Override
-    public void onStop() {
-        super.onStop();
-        this.mAdapter.cleanup();
+    public void onDestroy() {
+        super.onDestroy();
+        if(this.mAdapter != null) {
+            this.mAdapter.cleanup();
+        }
     }
 }

@@ -43,6 +43,7 @@ import me.relex.circleindicator.CircleIndicator;
 public class PlaceDetailActivity extends AppCompatActivity implements OnMapReadyCallback, LocationListener {
 
     private final String DIRECT_API_KEY = "AIzaSyDjXHNyOW7EZU42ubxtQ8RgYQZTyzf6_EA";
+    public static final String EXTRA_PLACE_KEY = "place_key";
 
     private int currentPage = 0;
     private ViewPager vpPlaceDetailImages;
