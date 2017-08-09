@@ -76,27 +76,18 @@ public class TabNewsFeedFragment extends Fragment {
             }
         };
 
-        this.layoutManager = new LinearLayoutManager(rootView.getContext());
-        //this.placeRecyclerViewAdapter = new PlaceRecyclerViewAdapter(this.placeModels);
+        this.layoutManager = new LinearLayoutManager(rootView.getContext(), LinearLayoutManager.VERTICAL, true);
         this.rcvNewsFeeds = (RecyclerView)rootView.findViewById(R.id.rcvNewsFeeds);
         this.rcvNewsFeeds.setHasFixedSize(true);
         this.rcvNewsFeeds.setLayoutManager(this.layoutManager);
         this.rcvNewsFeeds.setAdapter(this.mAdapter);
 
-//        this.rcvNewsFeeds.addOnItemTouchListener(new RecyclerItemClickListener(rootView.getContext(), this.rcvNewsFeeds, new RecyclerItemClickListener.OnItemClickListener() {
-//            @Override
-//            public void onItemClick(View view, int position) {
-//                Toast.makeText(view.getContext(), placeModels.get(position).toString(), Toast.LENGTH_SHORT).show();
-//                Intent intent = new Intent(view.getContext(), PlaceDetailActivity.class);
-//                startActivity(intent);
-//            }
-//
-//            @Override
-//            public void onItemLongClick(View view, int position) {
-//
-//            }
-//        }));
-
         return rootView;
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        this.mAdapter.cleanup();
     }
 }
