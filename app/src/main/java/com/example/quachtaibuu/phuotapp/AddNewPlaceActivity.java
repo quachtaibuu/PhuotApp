@@ -160,7 +160,7 @@ public class AddNewPlaceActivity extends BaseActivity implements OnMapReadyCallb
                     uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                         @Override
                         public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                            placeImages.put(Integer.toString(placeImages.size() + 1), imgPath);
+                            placeImages.put("img_" + placeImages.size(), imgPath);
                             if(placeImages.size() == lstUriImageChoosen.size()) {
                                 DatabaseReference reference = mDatabase.child("places");
                                 String key = reference.push().getKey();
@@ -173,6 +173,7 @@ public class AddNewPlaceActivity extends BaseActivity implements OnMapReadyCallb
                                 placeModel.setLongitude(longtitude);
                                 placeModel.setImages(placeImages);
                                 placeModel.setLocation(locationModelPickup);
+                                placeModel.setUser(getCurrentUser());
 
                                 Map<String, Object> placeValues = placeModel.toMap();
 

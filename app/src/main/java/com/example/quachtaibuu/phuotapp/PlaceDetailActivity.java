@@ -79,12 +79,12 @@ public class PlaceDetailActivity extends AppCompatActivity implements OnMapReady
     }
 
     private void loadData() {
-        this.placeModel = new PlaceModel("Miếu bà chúa xứ Núi Sam", R.drawable.news_avatar, "Góc Thư Giản", "1 tháng 8 lúc 03:11 SA", "An Giang", R.drawable.pc_mieuba, 6, 4, 2, 10.6795326, 105.0763105);
-
-        this.latLngPlace = new LatLng(this.placeModel.getLatitude(), this.placeModel.getLongitude());
-
-        this.lstData.add(R.drawable.loc_angiang);
-        this.lstData.add(R.drawable.loc_baclieu);
+//        this.placeModel = new PlaceModel("Miếu bà chúa xứ Núi Sam", R.drawable.news_avatar, "Góc Thư Giản", "1 tháng 8 lúc 03:11 SA", "An Giang", R.drawable.pc_mieuba, 6, 4, 2, 10.6795326, 105.0763105);
+//
+//        this.latLngPlace = new LatLng(this.placeModel.getLatitude(), this.placeModel.getLongitude());
+//
+//        this.lstData.add(R.drawable.loc_angiang);
+//        this.lstData.add(R.drawable.loc_baclieu);
     }
 
     private void initSlideImage() {

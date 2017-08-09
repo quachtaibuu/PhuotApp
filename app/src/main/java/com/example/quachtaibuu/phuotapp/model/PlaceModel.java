@@ -1,7 +1,9 @@
 package com.example.quachtaibuu.phuotapp.model;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -14,7 +16,7 @@ public class PlaceModel {
     private String title;
     private int userImage;
     private String username;
-    private String created;
+    private long created;
     private String locationName;
     private int placeImage;
 
@@ -37,7 +39,7 @@ public class PlaceModel {
     public PlaceModel() {
     }
 
-    public PlaceModel(String title, int userImage, String username, String created, String locationName, int placeImage, int countLike, int countComment, int getCountShare) {
+    public PlaceModel(String title, int userImage, String username, long created, String locationName, int placeImage, int countLike, int countComment, int getCountShare) {
         this.title = title;
         this.userImage = userImage;
         this.username = username;
@@ -49,7 +51,7 @@ public class PlaceModel {
         this.getCountShare = getCountShare;
     }
 
-    public PlaceModel(String title, int userImage, String username, String created, String locationName, int placeImage, int countLike, int countComment, int getCountShare, double latitude, double longitude) {
+    public PlaceModel(String title, int userImage, String username, long created, String locationName, int placeImage, int countLike, int countComment, int getCountShare, double latitude, double longitude) {
         this.title = title;
         this.userImage = userImage;
         this.username = username;
@@ -63,7 +65,7 @@ public class PlaceModel {
         this.longitude = longitude;
     }
 
-    public PlaceModel(String title, int userImage, String username, String created, String locationName, int placeImage, int countLike, int countComment, int getCountShare, double latitude, double longitude, LocationModel location, UserModel user) {
+    public PlaceModel(String title, int userImage, String username, long created, String locationName, int placeImage, int countLike, int countComment, int getCountShare, double latitude, double longitude, LocationModel location, UserModel user) {
         this.title = title;
         this.userImage = userImage;
         this.username = username;
@@ -103,11 +105,11 @@ public class PlaceModel {
         this.username = username;
     }
 
-    public String getCreated() {
+    public long getCreated() {
         return created;
     }
 
-    public void setCreated(String created) {
+    public void setCreated(long created) {
         this.created = created;
     }
 
@@ -245,6 +247,7 @@ public class PlaceModel {
         result.put("longitude", this.longitude);
         result.put("location", location.toMap());
         result.put("images", this.images);
+        result.put("user", this.user);
         return  result;
     }
 }
