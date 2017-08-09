@@ -250,4 +250,12 @@ public class PlaceModel {
         result.put("user", this.user);
         return  result;
     }
+
+    public List<String> getImagesAsList() {
+        List<String> result = new ArrayList<>();
+        for(Map.Entry<String, String> entry: this.getImages().entrySet()) {
+            result.add(entry.getValue());
+        }
+        return  result;
+    }
 }
