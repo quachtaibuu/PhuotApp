@@ -3,6 +3,7 @@
     <string name="facebook_app_id">167918773753177</string>
     <string name="fb_login_protocol_scheme">fb167918773753177</string>
     <string name="gg_web_client_id">532468520339-jqlkqmprq22l3s2duj9so3r4pg55ej7c.apps.googleusercontent.com</string>
+    <string name="gg_direct_api_key">AIzaSyDMQ7SIMMaCQ1qjPDwNbSO5MEp7lu2-ctg</string>
 
     <string name="app_name">Phượt thủ</string>
     <string name="btnLoginFB">Đăng nhập bằng Facebook</string>
@@ -22,6 +23,7 @@
     <string name="navigation_notifications">Thông báo</string>
 
     <string name="action_logout">Đăng xuất</string>
+    <string name="action_search">Tìm kiếm</string>
 
     <string name="menuAddNewPlaceAdd">Thêm</string>
 
@@ -44,10 +46,12 @@
     <string name="hintEdAddNewPlacePhone">Số điện thoại</string>
     <string name="hintEdAddNewPlaceDescription">Mô tả địa điểm</string>
     <string name="hintEdAddNewPlaceName">Tên địa điểm</string>
+    <string name="hintEdPlaceCommentBody">Viết nhận xét...</string>
 
     <string name="msgRequestPermission">Vui lòng cấp phép truy cập</string>
     <string name="msgRequestGrant">Cấp phép</string>
     <string name="msgSuccessInsertedForPlace">Thông tin địa điểm đã được thêm!</string>
+    <string name="msgSuccessInsertedForComment">Đã trả lời bài viết!</string>
     <string name="msgLoading">Đang xử lý thông tin...</string>
     <string name="msgUnableLoadImage">Không thể tải hình ảnh</string>
 
@@ -57,5 +61,6 @@
     <string name="tvPlaceDetailDescriptionTitle">Mô tả địa điểm</string>
     <string name="tvPlaceDetailDistance">Khoảng cách</string>
     <string name="tvPlaceDetailDuration">Thời gian</string>
+    <string name="title_activity_search_place">SearchPlaceActivity</string>
 
 </resources>

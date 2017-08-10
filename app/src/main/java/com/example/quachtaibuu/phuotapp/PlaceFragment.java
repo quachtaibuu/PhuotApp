@@ -54,7 +54,7 @@ public class PlaceFragment extends Fragment {
         locationPagerAdapter.addFragment(new TabNewsFeedFragment(), getResources().getString(R.string.tabNewsFeed));
         locationPagerAdapter.addFragment(new TabPopulateFragment(), getResources().getString(R.string.tabPopulate));
         locationPagerAdapter.addFragment(new TabLocationFragment(), getResources().getString(R.string.tabLocation));
-        locationPagerAdapter.addFragment(new TabNewsFeedFragment(), getResources().getString(R.string.tabMyPosted));
+        locationPagerAdapter.addFragment(new TabMyPostFragement(), getResources().getString(R.string.tabMyPosted));
         this.mViewPager.setAdapter(locationPagerAdapter);
     }
 }

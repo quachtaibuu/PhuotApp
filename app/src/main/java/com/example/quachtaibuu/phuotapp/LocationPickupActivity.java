@@ -51,7 +51,7 @@ public class LocationPickupActivity extends AppCompatActivity {
     private EditText edSearch;
     private boolean isSearchIsOpened;
 
-    private RecyclerView rcvLocationsPicup;
+    private RecyclerView rcvLocationsPikup;
     private LinearLayoutManager layoutManager;
 
     private final DatabaseReference mDatabaseReference = FirebaseDatabase.getInstance().getReference("locations");
@@ -67,7 +67,7 @@ public class LocationPickupActivity extends AppCompatActivity {
         this.mToolBar = (Toolbar) findViewById(R.id.customToolBar);
         setSupportActionBar(this.mToolBar);
 
-        this.rcvLocationsPicup = (RecyclerView) findViewById(R.id.rcvLocationsPickup);
+        this.rcvLocationsPikup = (RecyclerView) findViewById(R.id.rcvLocationsPickup);
 
 //        this.mPostQuery = this.mPostQuery.startAt(strSearch).endAt(strSearch + "\uF8FF");
 //
@@ -92,9 +92,9 @@ public class LocationPickupActivity extends AppCompatActivity {
 
         this.layoutManager = new LinearLayoutManager(this);
 
-        this.rcvLocationsPicup.setLayoutManager(this.layoutManager);
-        this.rcvLocationsPicup.addItemDecoration(new DividerItemDecoration(this, this.layoutManager.getOrientation()));
-        this.rcvLocationsPicup.setAdapter(this.mAdapter);
+        this.rcvLocationsPikup.setLayoutManager(this.layoutManager);
+        this.rcvLocationsPikup.addItemDecoration(new DividerItemDecoration(this, this.layoutManager.getOrientation()));
+        this.rcvLocationsPikup.setAdapter(this.mAdapter);
         this.loadData(this.mPostQuery);
     }
 
@@ -124,7 +124,7 @@ public class LocationPickupActivity extends AppCompatActivity {
             }
         };
 
-        this.rcvLocationsPicup.setAdapter(this.mAdapter);
+        this.rcvLocationsPikup.setAdapter(this.mAdapter);
 
     }
 

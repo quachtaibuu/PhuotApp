@@ -1,76 +1,67 @@
-package com.example.quachtaibuu.phuotapp;
+package com.example.quachtaibuu.phuotapp.absFragement;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.view.ContextThemeWrapper;
+import android.support.v7.widget.DividerItemDecoration;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.KeyEvent;
-import android.view.LayoutInflater;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.Window;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.example.quachtaibuu.phuotapp.AddNewPlaceActivity;
+import com.example.quachtaibuu.phuotapp.LocationPickupActivity;
+import com.example.quachtaibuu.phuotapp.R;
+import com.example.quachtaibuu.phuotapp.holder.LocationPickupViewHolder;
+import com.example.quachtaibuu.phuotapp.model.LocationModel;
+import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
+import com.google.gson.Gson;
 
 import org.apache.commons.lang3.text.WordUtils;
 
-public class TabSearchFragment extends Fragment {
+/**
+ * Created by Quach Tai Buu on 2017-08-10.
+ */
 
-    private AppCompatActivity activity;
+public abstract class AbsSearchActivity extends AppCompatActivity {
 
-    private Toolbar mToolBar;
+    private MenuItem mSearchAction;
     private EditText edSearch;
     private boolean isSearchIsOpened;
 
-    private MenuItem mSearchAction;
-
-    @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_tab_search, container, false);
-//
-//        this.mToolBar = (Toolbar)rootView.findViewById(R.id.customToolBar);
-//
-//
-//        return rootView;
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        this.onCreateFinish(savedInstanceState);
+    }
 
-        setHasOptionsMenu(true);
-        final Context contextThemeWrapper = new ContextThemeWrapper(getActivity(), R.style.Theme_AppCompat_Light_NoActionBar);
-        LayoutInflater localInflater = inflater.cloneInContext(contextThemeWrapper);
 
-        this.activity = (AppCompatActivity)getActivity();
-        this.activity.setSupportActionBar(this.mToolBar);
-        this.mToolBar = (Toolbar)rootView.findViewById(R.id.abSearchPlace);
 
-        this.activity = (AppCompatActivity)getActivity();
-        this.activity.setSupportActionBar(this.mToolBar);
-
-        return localInflater.inflate(R.layout.fragment_tab_search, container, false);
-
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_search, menu);
+        return true;
     }
 
     @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.menu_search, menu);
+    public boolean onPrepareOptionsMenu(Menu menu) {
         this.mSearchAction = menu.findItem(R.id.action_search);
-        //super.onCreateOptionsMenu(menu, inflater);
-        return;
+        return super.onPrepareOptionsMenu(menu);
     }
-
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -83,28 +74,28 @@ public class TabSearchFragment extends Fragment {
     }
 
     private void handleMenuSearch() {
-        ActionBar actionBar = this.activity.getSupportActionBar();
+        ActionBar actionBar = getSupportActionBar();
         if (this.isSearchIsOpened) {
             actionBar.setDisplayShowCustomEnabled(false);
             actionBar.setDisplayShowTitleEnabled(true);
 
-            InputMethodManager inputMethodManager = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
+            InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
             inputMethodManager.hideSoftInputFromWindow(this.edSearch.getWindowToken(), 0);
 
             mSearchAction.setIcon(getResources().getDrawable(R.drawable.ic_search_black_24dp));
             this.isSearchIsOpened = false;
-            //this.loadData(this.mPostQuery);
+            this.loadData();
         } else {
 
             actionBar.setDisplayShowCustomEnabled(true);
             actionBar.setDisplayShowTitleEnabled(false);
             actionBar.setCustomView(R.layout.search_bar);
 
-            this.edSearch = (EditText) this.activity.findViewById(R.id.edSearch);
+            this.edSearch = (EditText) findViewById(R.id.edSearch);
             this.edSearch.setOnEditorActionListener(new TextView.OnEditorActionListener() {
                 @Override
                 public boolean onEditorAction(TextView textView, int actionId, KeyEvent keyEvent) {
-                    doSearch();
+                    doSearch(edSearch.getText().toString());
                     return true;
                 }
             });
@@ -128,7 +119,7 @@ public class TabSearchFragment extends Fragment {
                     this.runnable = new Runnable() {
                         @Override
                         public void run() {
-                            doSearch();
+                            doSearch(edSearch.getText().toString());
                         }
                     };
                     this.handler.postDelayed(this.runnable, 1000);
@@ -136,7 +127,7 @@ public class TabSearchFragment extends Fragment {
             });
 
             this.edSearch.requestFocus();
-            InputMethodManager inputMethodManager = (InputMethodManager) this.activity.getSystemService(Context.INPUT_METHOD_SERVICE);
+            InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
             inputMethodManager.showSoftInput(this.edSearch, InputMethodManager.SHOW_IMPLICIT);
 
             this.mSearchAction.setIcon(getResources().getDrawable(R.drawable.ic_close_black_24dp));
@@ -146,9 +137,8 @@ public class TabSearchFragment extends Fragment {
     }
 
 
-    private void doSearch() {
-//        String strSearch = WordUtils.capitalize(this.edSearch.getText().toString().toLowerCase());
-//        Query mPostQuery = this.mPostQuery.startAt(strSearch).endAt(strSearch + "\uF8FF");
-//        this.loadData(mPostQuery);
-    }
+    public abstract void onCreateFinish(Bundle savedInstanceState);
+    public abstract void loadData();
+    public abstract void doSearch(String strTextSearch);
+
 }

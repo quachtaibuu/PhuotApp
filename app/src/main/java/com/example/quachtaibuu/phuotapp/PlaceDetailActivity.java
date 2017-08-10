@@ -15,8 +15,10 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.akexorcist.googledirection.DirectionCallback;
 import com.akexorcist.googledirection.GoogleDirection;
@@ -56,7 +58,7 @@ import me.relex.circleindicator.CircleIndicator;
 
 public class PlaceDetailActivity extends BaseActivity implements OnMapReadyCallback, LocationListener {
 
-    private final String DIRECT_API_KEY = "AIzaSyDjXHNyOW7EZU42ubxtQ8RgYQZTyzf6_EA";
+    //private final String DIRECT_API_KEY = "AIzaSyDMQ7SIMMaCQ1qjPDwNbSO5MEp7lu2-ctg";
     public static final String EXTRA_PLACE_KEY = "place_key";
 
     private int currentPage = 0;
@@ -180,7 +182,14 @@ public class PlaceDetailActivity extends BaseActivity implements OnMapReadyCallb
                 placeModel = dataSnapshot.getValue(PlaceModel.class);
 
                 if(placeModel != null) {
-                    latLngPlace = new LatLng(placeModel.getLatitude(), placeModel.getLongitude());
+                    LatLng latLngCheck = new LatLng(placeModel.getLatitude(), placeModel.getLongitude());
+
+                    if(latLngCurrent != null && latLngCheck != latLngPlace) {
+                        getDirection(latLngCurrent, latLngPlace);
+                    }
+
+                    latLngPlace = latLngCheck;
+
                     tvPlaceDetailTitle.setText(placeModel.getTitle());
                     tvPlaceDetailAddress.setText(placeModel.getAddress());
                     tvPlaceDetailDescription.setText(placeModel.getDescription());
@@ -235,7 +244,8 @@ public class PlaceDetailActivity extends BaseActivity implements OnMapReadyCallb
     }
 
     private void getDirection(LatLng latLngCurrent, LatLng latLngPlace) {
-        GoogleDirection.withServerKey(this.DIRECT_API_KEY)
+
+        GoogleDirection.withServerKey(getString(R.string.gg_direct_api_key))
                 .from(latLngCurrent)
                 .to(latLngPlace)
                 .unit(Unit.METRIC)
@@ -266,7 +276,7 @@ public class PlaceDetailActivity extends BaseActivity implements OnMapReadyCallb
 
                     @Override
                     public void onDirectionFailure(Throwable t) {
-
+                        Toast.makeText(PlaceDetailActivity.this, t.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 });
     }
@@ -275,8 +285,9 @@ public class PlaceDetailActivity extends BaseActivity implements OnMapReadyCallb
     public void onLocationChanged(Location location) {
         if(location != null) {
             this.latLngCurrent = new LatLng(location.getLatitude(), location.getLongitude());
-            this.locationManager.removeUpdates(this);
             getDirection(latLngCurrent, latLngPlace);
+
+            this.locationManager.removeUpdates(this);
         }
     }
 

@@ -127,7 +127,7 @@ public class LoginActivity extends AbsRuntimePermission {
         super.onStart();
         FirebaseUser user = this.mAuth.getCurrentUser();
         if (user != null) {
-            showMainActivity(user);
+            showMainActivity();
         }
     }
 
@@ -137,12 +137,9 @@ public class LoginActivity extends AbsRuntimePermission {
         if (requestCode == RC_SIGN_IN) {
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
             if (result.isSuccess()) {
-                // Google Sign In was successful, authenticate with Firebase
                 GoogleSignInAccount account = result.getSignInAccount();
                 firebaseAuthWithGoogle(account);
             } else {
-                // Google Sign In failed, update UI appropriately
-                // ...
                 Toast.makeText(this, "Lỗi! Không thể đăng nhập!", Toast.LENGTH_SHORT).show();
             }
         } else {
@@ -162,11 +159,9 @@ public class LoginActivity extends AbsRuntimePermission {
                         hideProgressDialog();
 
                         if (task.isSuccessful()) {
-                            // Sign in success, update UI with the signed-in user's information
                             Log.d(TAG, "signInWithCredential:success");
-                            showMainActivity(task.getResult().getUser());
+                            doRegister(task.getResult().getUser());
                         } else {
-                            // If sign in fails, display a message to the user.
                             Log.w(TAG, "signInWithCredential:failure", task.getException());
                             Toast.makeText(LoginActivity.this, task.getException().getMessage().toString(),
                                     Toast.LENGTH_SHORT).show();
@@ -188,7 +183,7 @@ public class LoginActivity extends AbsRuntimePermission {
 
                         if (task.isSuccessful()) {
                             Log.d(TAG, "signInWithCredential:success");
-                            showMainActivity(task.getResult().getUser());
+                            doRegister(task.getResult().getUser());
                         } else {
                             Log.w(TAG, "signInWithCredential:failure", task.getException());
                             Toast.makeText(LoginActivity.this, task.getException().getMessage().toString(),
@@ -209,26 +204,10 @@ public class LoginActivity extends AbsRuntimePermission {
         LoginManager.getInstance().logInWithReadPermissions(this, Arrays.asList("public_profile", "user_friends", "email"));
     }
 
-    private void showMainActivity(final FirebaseUser user) {
+    private void showMainActivity() {
 
-        if (user != null) {
+        startActivity(new Intent(LoginActivity.this, MainActivity.class));
 
-            mDatabase.child("users").child(user.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    if (!dataSnapshot.exists()) {
-                        doRegister(user);
-                    }else {
-                        startActivity(new Intent(LoginActivity.this, MainActivity.class));
-                    }
-                }
-
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-
-                }
-            });
-        }
     }
 
     private void doRegister(final FirebaseUser user) {

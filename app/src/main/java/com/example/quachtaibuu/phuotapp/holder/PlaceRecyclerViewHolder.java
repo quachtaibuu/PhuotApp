@@ -26,6 +26,7 @@ public class PlaceRecyclerViewHolder extends RecyclerView.ViewHolder {
     public TextView tvItemNewsLocation;
     public TextView tvItemNewsTitle;
     public TextView tvItemNewsLike;
+    public TextView tvItemNewsComment;
 
     public ImageView imgItemPlace;
     public ImageView imgItemUserImage;
@@ -44,6 +45,7 @@ public class PlaceRecyclerViewHolder extends RecyclerView.ViewHolder {
         this.tvItemNewsUserId = (TextView) itemView.findViewById(R.id.tvItemNewsUserId);
         this.tvItemNewsCreated = (TextView) itemView.findViewById(R.id.tvItemNewsCreated);
         this.tvItemNewsLike = (TextView) itemView.findViewById(R.id.tvItemNewsLike);
+        this.tvItemNewsComment = (TextView) itemView.findViewById(R.id.tvItemNewsComment);
         this.tvItemNewsLocation = (TextView) itemView.findViewById(R.id.tvItemNewsLocation);
         this.tvItemNewsTitle = (TextView) itemView.findViewById(R.id.tvItemNewsTitle);
         this.imgItemPlace = (ImageView) itemView.findViewById(R.id.imgItemNewsPlace);
@@ -60,6 +62,7 @@ public class PlaceRecyclerViewHolder extends RecyclerView.ViewHolder {
         this.tvItemNewsUserId.setText(model.getUser().getDisplayName());
         this.tvItemNewsCreated.setText((new Date(model.getCreated())).toString());
         this.tvItemNewsLike.setText(Integer.toString(model.getCountLike()));
+        this.tvItemNewsComment.setText(Integer.toString(model.getCountComment()));
         this.tvItemNewsLocation.setText(model.getLocation().getName());
         this.tvItemNewsTitle.setText(model.getTitle());
         Glide.with(itemView.getContext())

@@ -2,6 +2,7 @@ package com.example.quachtaibuu.phuotapp;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -41,8 +42,9 @@ public class MainActivity extends AppCompatActivity {
                     fragmentTransaction.replace(R.id.main_content, new TabPopulateFragment()).commit();
                     return true;
                 case R.id.navigation_search:
-                    fragmentTransaction.replace(R.id.main_content, new TabSearchFragment()).commit();
-                    return true;
+                    startActivity(new Intent(MainActivity.this, SearchPlaceActivity.class));
+                    //fragmentTransaction.replace(R.id.main_content, new TabSearchFragment()).commit();
+                    return false;
             }
             return false;
         }

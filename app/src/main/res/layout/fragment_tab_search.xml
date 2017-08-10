@@ -4,18 +4,17 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <EditText
-        android:id="@+id/edPlaceSearch"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:drawableLeft="@drawable/ic_search_black_24dp"
-        android:drawablePadding="5dp"
-        android:hint="@string/hintSearch"/>
+    <include
+        android:id="@+id/abSearchPlace"
+        layout="@layout/action_bar_search_custom" />
 
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/rcvSearchResult"
+        android:id="@+id/rcvSearchPlaceResult"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:scrollbars="vertical" />
+        android:scrollbars="vertical"
+        tools:listitem="@layout/item_place_sm"
+        android:paddingTop="15dp"
+        android:paddingBottom="15dp"/>
 
 </LinearLayout>

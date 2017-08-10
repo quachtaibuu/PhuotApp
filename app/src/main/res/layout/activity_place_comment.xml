@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.quachtaibuu.phuotapp.PlaceCommentActivity">
+
+    <include android:id="@+id/toolBarPlaceComment"
+        layout="@layout/action_bar_search_custom"></include>
+
+    <android.support.v7.widget.RecyclerView
+
+        android:id="@+id/rcvPlaceCommentPost"
+
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="60dp"
+        android:layout_marginBottom="65dp"
+        tools:listitem="@layout/item_place_comment">
+    </android.support.v7.widget.RecyclerView>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:weightSum="1.0"
+        android:layout_alignParentBottom="true"
+        android:gravity="center"
+        android:background="@android:color/white"
+        android:padding="10dp">
+
+        <EditText
+            android:id="@+id/edPlaceCommentBody"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.9"
+            android:hint="@string/hintEdPlaceCommentBody"
+            android:padding="15dp"
+            android:maxLines="1"
+            android:background="@drawable/edit_text_hide_border"/>
+
+        <Button
+            android:id="@+id/btnPlaceCommentPost"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.1"
+            android:drawableRight="@drawable/ic_send_black_24dp"
+            android:background="@android:color/transparent"
+            />
+
+    </LinearLayout>
+
+</RelativeLayout>

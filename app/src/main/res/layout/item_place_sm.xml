@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="wrap_content" >
+
+    <TableLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:stretchColumns="1"
+        android:padding="15dp">
+
+        <TableRow>
+
+            <ImageView
+                android:id="@+id/imgItemPlaceSmPicture"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:scaleType="centerCrop"
+                android:background="@android:color/darker_gray"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:paddingLeft="10dp"
+                android:gravity="center_vertical"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tvItemPlaceSmTitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Tên địa điểm"
+                    android:textStyle="bold"
+                    android:textSize="17.5sp"
+                    android:paddingBottom="10dp"/>
+
+                <TextView
+                    android:id="@+id/tvItemPlaceSmAddress"
+                    android:layout_width="250dp"
+                    android:layout_height="wrap_content"
+                    android:drawableLeft="@drawable/ic_place_black_24dp"
+                    android:drawableTint="@android:color/darker_gray"
+                    android:paddingLeft="10dp"
+                    android:paddingBottom="5dp"
+                    android:gravity="center_vertical"
+                    android:drawablePadding="5dp"
+                    android:text="123 đâu đó"
+                    android:maxLines="1"
+                    android:scrollHorizontally="true"
+                    android:ellipsize="end"/>
+
+                <TextView
+                    android:id="@+id/tvItemPlaceSmLike"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:drawableLeft="@drawable/ic_favorite_black_24dp"
+                    android:paddingLeft="10dp"
+                    android:drawablePadding="5dp"
+                    android:gravity="center"
+                    android:text="3"/>
+
+            </LinearLayout>
+
+        </TableRow>
+
+    </TableLayout>
+
+</android.support.v7.widget.CardView>
