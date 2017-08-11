@@ -119,6 +119,9 @@ public abstract class AbsPlacesFragment extends Fragment {
     }
 
     private void onLikeClick(DatabaseReference ref) {
+
+        ref.keepSynced(true);
+
         ref.runTransaction(new Transaction.Handler() {
             @RequiresApi(api = Build.VERSION_CODES.M)
             @Override

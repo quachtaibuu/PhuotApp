@@ -28,6 +28,7 @@ public class SearchPlaceActivity extends AbsSearchActivity {
     private LinearLayoutManager mLayoutManager;
 
     private RecyclerView rcvSearchPlaceResult;
+    private Query mQuery;
 
 
 
@@ -38,10 +39,37 @@ public class SearchPlaceActivity extends AbsSearchActivity {
         this.mToolBar = (Toolbar) findViewById(R.id.abSearchPlace);
         setSupportActionBar(this.mToolBar);
 
-        this.mDatabase = FirebaseDatabase.getInstance().getReference();
-        Query queryPlace = this.mDatabase.child("places").limitToFirst(100);
+        this.mDatabase = FirebaseDatabase.getInstance().getReference("places");
+        this.mQuery = this.mDatabase.orderByChild("title");
 
-        this.mAdapter = new FirebaseRecyclerAdapter<PlaceModel, ItemPlaceSmViewHolder>(PlaceModel.class, R.layout.item_place_sm, ItemPlaceSmViewHolder.class, queryPlace) {
+        this.mLayoutManager = new LinearLayoutManager(this);
+        this.rcvSearchPlaceResult = (RecyclerView)findViewById(R.id.rcvSearchPlaceResult);
+        this.rcvSearchPlaceResult.setLayoutManager(this.mLayoutManager);
+        this.rcvSearchPlaceResult.addItemDecoration(new DividerItemDecoration(this, this.mLayoutManager.getOrientation()));
+        this.rcvSearchPlaceResult.setHasFixedSize(true);
+        this.rcvSearchPlaceResult.setAdapter(this.mAdapter);
+
+        this.loadData(this.mQuery);
+    }
+
+    @Override
+    public void doSearch(String strTextSearch) {
+        Query query = this.mDatabase.orderByChild("title").startAt(strTextSearch).endAt(strTextSearch + "\uF8FF").limitToFirst(100);
+        this.loadData(query);
+    }
+
+    @Override
+    public void loadData(Query query) {
+
+        if(this.mAdapter != null) {
+            this.mAdapter.cleanup();
+        }
+
+        if(query == null) {
+            query = this.mQuery;
+        }
+
+        this.mAdapter = new FirebaseRecyclerAdapter<PlaceModel, ItemPlaceSmViewHolder>(PlaceModel.class, R.layout.item_place_sm, ItemPlaceSmViewHolder.class, query) {
 
             @Override
             protected void populateViewHolder(ItemPlaceSmViewHolder viewHolder, PlaceModel model, int position) {
@@ -61,21 +89,7 @@ public class SearchPlaceActivity extends AbsSearchActivity {
 
         };
 
-        this.mLayoutManager = new LinearLayoutManager(this);
-        this.rcvSearchPlaceResult = (RecyclerView)findViewById(R.id.rcvSearchPlaceResult);
-        this.rcvSearchPlaceResult.setLayoutManager(this.mLayoutManager);
-        this.rcvSearchPlaceResult.addItemDecoration(new DividerItemDecoration(this, this.mLayoutManager.getOrientation()));
-        this.rcvSearchPlaceResult.setHasFixedSize(true);
         this.rcvSearchPlaceResult.setAdapter(this.mAdapter);
-    }
-
-    @Override
-    public void doSearch(String strTextSearch) {
-
-    }
-
-    @Override
-    public void loadData() {
 
     }
 

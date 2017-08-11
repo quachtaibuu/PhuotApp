@@ -69,27 +69,6 @@ public class LocationPickupActivity extends AppCompatActivity {
 
         this.rcvLocationsPikup = (RecyclerView) findViewById(R.id.rcvLocationsPickup);
 
-//        this.mPostQuery = this.mPostQuery.startAt(strSearch).endAt(strSearch + "\uF8FF");
-//
-//        this.mAdapter = new FirebaseRecyclerAdapter<LocationModel, LocationPickupViewHolder>(LocationModel.class, R.layout.item_search_location, LocationPickupViewHolder.class, this.mPostQuery) {
-//            @Override
-//            protected void populateViewHolder(LocationPickupViewHolder viewHolder, final LocationModel model, int position) {
-//                DatabaseReference ref = getRef(position);
-//
-//                viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
-//                    @Override
-//                    public void onClick(View view) {
-//                        Intent intent = new Intent(LocationPickupActivity.this, AddNewPlaceActivity.class);
-//                        intent.putExtra("location", new Gson().toJson(model));
-//                        setResult(RESULT_OK, intent);
-//                        finish();
-//                    }
-//                });
-//
-//                viewHolder.bindToLocation(model);
-//            }
-//        } ;
-
         this.layoutManager = new LinearLayoutManager(this);
 
         this.rcvLocationsPikup.setLayoutManager(this.layoutManager);

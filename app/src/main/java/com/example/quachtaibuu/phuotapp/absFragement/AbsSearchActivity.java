@@ -84,7 +84,7 @@ public abstract class AbsSearchActivity extends AppCompatActivity {
 
             mSearchAction.setIcon(getResources().getDrawable(R.drawable.ic_search_black_24dp));
             this.isSearchIsOpened = false;
-            this.loadData();
+            this.loadData(null);
         } else {
 
             actionBar.setDisplayShowCustomEnabled(true);
@@ -138,7 +138,7 @@ public abstract class AbsSearchActivity extends AppCompatActivity {
 
 
     public abstract void onCreateFinish(Bundle savedInstanceState);
-    public abstract void loadData();
+    public abstract void loadData(Query query);
     public abstract void doSearch(String strTextSearch);
 
 }
