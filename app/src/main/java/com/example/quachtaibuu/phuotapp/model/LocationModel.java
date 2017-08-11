@@ -1,5 +1,7 @@
 package com.example.quachtaibuu.phuotapp.model;
 
+import com.google.gson.annotations.JsonAdapter;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -11,7 +13,7 @@ import java.util.Map;
 
 public class LocationModel {
 
-    private String id;
+    private String locationKey;
     private String name;
     private String description;
     private int image;
@@ -20,30 +22,13 @@ public class LocationModel {
     private double longtitude;
     private Map<String, String> images = new HashMap<>();
 
-    public LocationModel() {
+
+    public String getLocationKey() {
+        return locationKey;
     }
 
-    public LocationModel(String id, String name, String description, int image) {
-        this.id = id;
-        this.name = name;
-        this.description = description;
-        this.image = image;
-    }
-
-    public LocationModel(String id, String name, String description, int image, List<PlaceModel> places) {
-        this.id = id;
-        this.name = name;
-        this.description = description;
-        this.image = image;
-        this.places = places;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
+    public void setLocationKey(String locationKey) {
+        this.locationKey = locationKey;
     }
 
     public String getName() {
@@ -109,17 +94,21 @@ public class LocationModel {
     @Override
     public String toString() {
         return "LocationModel{" +
-                "id='" + id + '\'' +
+                "locationKey='" + locationKey + '\'' +
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
                 ", image=" + image +
-                ", places=" + places.toString() +
+                ", places=" + places +
+                ", latitude=" + latitude +
+                ", longtitude=" + longtitude +
+                ", images=" + images +
                 '}';
     }
 
     public Map<String, Object> toMap() {
         HashMap<String, Object> result = new HashMap<>();
 
+        result.put("locationKey", this.locationKey);
         result.put("name", this.name);
         result.put("description", this.description);
         result.put("latitude", this.latitude);

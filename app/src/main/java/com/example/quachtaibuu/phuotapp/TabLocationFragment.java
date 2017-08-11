@@ -73,7 +73,6 @@ public class TabLocationFragment extends Fragment {
                 String key = dataSnapshot.getKey();
                 if(lstDataKey.indexOf(key) == -1) {
                     LocationModel location = dataSnapshot.getValue(LocationModel.class);
-                    location.setId(key);
                     lstDataKey.add(key);
                     lstData.add(location);
                     locationAdapter.notifyDataSetChanged();
@@ -86,7 +85,6 @@ public class TabLocationFragment extends Fragment {
                 int index = lstDataKey.indexOf(key);
                 if(index != -1) {
                     LocationModel location = dataSnapshot.getValue(LocationModel.class);
-                    location.setId(dataSnapshot.getKey());
                     lstData.set(index, location);
                     locationAdapter.notifyDataSetChanged();
                 }

@@ -33,11 +33,14 @@ public class PlaceRecyclerViewHolder extends RecyclerView.ViewHolder {
 
     public Button btnItemNewsLike;
     public Button btnItemNewsComment;
+    public Button btnItemNewsEdit;
 
     public interface OnButtonClickListenser {
-        void ButtonLike_OnClick();
+        void ButtonLike_OnClick(View view);
 
-        void ButtonComment_OnClick();
+        void ButtonComment_OnClick(View view);
+
+        void ButtonEdit_OnClick(View view);
     }
 
     public PlaceRecyclerViewHolder(View itemView) {
@@ -53,6 +56,7 @@ public class PlaceRecyclerViewHolder extends RecyclerView.ViewHolder {
 
         this.btnItemNewsLike = (Button) itemView.findViewById(R.id.btnItemNewsLike);
         this.btnItemNewsComment = (Button) itemView.findViewById(R.id.btnItemNewsComment);
+        this.btnItemNewsEdit = (Button)itemView.findViewById(R.id.btnItemNewsEdit);
     }
 
 
@@ -77,13 +81,19 @@ public class PlaceRecyclerViewHolder extends RecyclerView.ViewHolder {
         this.btnItemNewsLike.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                onButtonClickListenser.ButtonLike_OnClick();
+                onButtonClickListenser.ButtonLike_OnClick(view);
             }
         });
         this.btnItemNewsComment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                onButtonClickListenser.ButtonComment_OnClick();
+                onButtonClickListenser.ButtonComment_OnClick(view);
+            }
+        });
+        this.btnItemNewsEdit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onButtonClickListenser.ButtonEdit_OnClick(view);
             }
         });
     }

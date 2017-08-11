@@ -10,6 +10,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
 import android.view.View;
+import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
@@ -66,10 +67,13 @@ public class PlaceCommentActivity extends BaseActivity {
         this.mToolbar = (Toolbar) findViewById(R.id.toolBarPlaceComment);
         setSupportActionBar(this.mToolbar);
 
-        DisplayMetrics dm = new DisplayMetrics();
-        getWindowManager().getDefaultDisplay().getMetrics(dm);
+//        DisplayMetrics dm = new DisplayMetrics();
+//        getWindowManager().getDefaultDisplay().getMetrics(dm);
+//
+//        getWindow().setLayout((int) (dm.widthPixels * 0.9), (int) (dm.heightPixels * 0.9));
 
-        getWindow().setLayout((int) (dm.widthPixels * 0.9), (int) (dm.heightPixels * 0.7));
+        //requestWindowFeature(Window.FEATURE_NO_TITLE);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         this.mDatabase = FirebaseDatabase.getInstance().getReference();
         this.mQuery = this.mDatabase.child("place-comments").child(this.mPlaceKey).orderByKey();

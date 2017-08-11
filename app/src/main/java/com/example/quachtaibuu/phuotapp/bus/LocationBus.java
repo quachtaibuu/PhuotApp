@@ -30,7 +30,6 @@ public class LocationBus {
         public void onDataChange(DataSnapshot dataSnapshot) {
             for (DataSnapshot data : dataSnapshot.getChildren()) {
                 LocationModel locationModel = data.getValue(LocationModel.class);
-                locationModel.setId(data.getKey());
                 locationModelList.add(locationModel);
                 adapter.notifyDataSetChanged();
             }

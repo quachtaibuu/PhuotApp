@@ -1,23 +1,39 @@
 package com.example.quachtaibuu.phuotapp.absFragement;
 
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.example.quachtaibuu.phuotapp.PlaceCommentActivity;
 import com.example.quachtaibuu.phuotapp.PlaceDetailActivity;
 import com.example.quachtaibuu.phuotapp.R;
 import com.example.quachtaibuu.phuotapp.holder.PlaceRecyclerViewHolder;
 import com.example.quachtaibuu.phuotapp.model.PlaceModel;
+import com.example.quachtaibuu.phuotapp.utils.PhuotAppDatabase;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.TaskCompletionSource;
+import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -27,9 +43,14 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.MutableData;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.Transaction;
+import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 
 public abstract class AbsPlacesFragment extends Fragment {
@@ -41,6 +62,8 @@ public abstract class AbsPlacesFragment extends Fragment {
     private DatabaseReference mDatabase;
     private final FirebaseUser mUser = FirebaseAuth.getInstance().getCurrentUser();
     private boolean isFirstTime = true;
+
+    private String mPlaceKey;
 
     @Nullable
     @Override
@@ -57,10 +80,14 @@ public abstract class AbsPlacesFragment extends Fragment {
             protected void populateViewHolder(final PlaceRecyclerViewHolder viewHolder, final PlaceModel model, int position) {
                 final DatabaseReference ref = getRef(position);
 
-                if(model.getLikes().containsKey(mUser.getUid())) {
+                if (model.getLikes().containsKey(mUser.getUid())) {
                     viewHolder.btnItemNewsLike.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_favorite_black_24dp, 0, 0, 0);
-                }else {
+                } else {
                     viewHolder.btnItemNewsLike.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_favorite_border_black_24dp, 0, 0, 0);
+                }
+
+                if (!model.getUser().getEmail().contains(mUser.getEmail())) {
+                    viewHolder.btnItemNewsEdit.setVisibility(View.INVISIBLE);
                 }
 
                 viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
@@ -74,23 +101,48 @@ public abstract class AbsPlacesFragment extends Fragment {
 
                 viewHolder.bindToPlace(model, new PlaceRecyclerViewHolder.OnButtonClickListenser() {
                     @Override
-                    public void ButtonLike_OnClick() {
-                        DatabaseReference userLikeRef = mDatabase.child("user-likes").child(mUser.getUid()).child(ref.getKey());
-                        DatabaseReference placesRef = mDatabase.child("places").child(ref.getKey());
-                        DatabaseReference userPlacesRef = mDatabase.child("user-places").child(mUser.getUid()).child(ref.getKey());
-                        DatabaseReference locationPlacesRef = mDatabase.child("location-places").child(ref.getKey());
+                    public void ButtonLike_OnClick(View view) {
+                        //DatabaseReference userLikeRef = mDatabase.child(PhuotAppDatabase.USER_LIKES).child(mUser.getUid()).child(ref.getKey());
+                        DatabaseReference placesRef = mDatabase.child(PhuotAppDatabase.PLACES).child(ref.getKey());
+                        DatabaseReference userPlacesRef = mDatabase.child(PhuotAppDatabase.USER_PLACES).child(mUser.getUid()).child(ref.getKey());
+                        DatabaseReference locationPlacesRef = mDatabase.child(PhuotAppDatabase.LOCATION_PLACES).child(model.getLocation().getLocationKey()).child(ref.getKey());
 
-                        onLikeClick(userLikeRef);
+                        //onLikeClick(userLikeRef);
                         onLikeClick(placesRef);
                         onLikeClick(userPlacesRef);
                         onLikeClick(locationPlacesRef);
                     }
 
                     @Override
-                    public void ButtonComment_OnClick() {
+                    public void ButtonComment_OnClick(View view) {
                         Intent intent = new Intent(getContext(), PlaceCommentActivity.class);
                         intent.putExtra(PlaceDetailActivity.EXTRA_PLACE_KEY, ref.getKey());
                         startActivity(intent);
+                    }
+
+                    @Override
+                    public void ButtonEdit_OnClick(View view) {
+                        mPlaceKey = ref.getKey();
+                        PopupMenu popupMenu = new PopupMenu(getActivity(), view);
+                        MenuInflater menuInflater = popupMenu.getMenuInflater();
+                        menuInflater.inflate(R.menu.menu_post, popupMenu.getMenu());
+
+                        popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                            @Override
+                            public boolean onMenuItemClick(MenuItem item) {
+                                switch (item.getItemId()) {
+                                    case R.id.action_post_delete:
+                                        onActionDeleteClick(ref.getKey(), model);
+                                        break;
+                                    case R.id.action_post_edit:
+                                        onActionEditClick(ref.getKey(), model);
+                                        break;
+                                }
+                                return true;
+                            }
+                        });
+
+                        popupMenu.show();
                     }
                 });
 
@@ -110,7 +162,7 @@ public abstract class AbsPlacesFragment extends Fragment {
 
 
         this.layoutManager = new LinearLayoutManager(rootView.getContext());
-        this.rcvNewsFeeds = (RecyclerView)rootView.findViewById(R.id.rcvNewsFeeds);
+        this.rcvNewsFeeds = (RecyclerView) rootView.findViewById(R.id.rcvNewsFeeds);
         this.rcvNewsFeeds.setHasFixedSize(true);
         this.rcvNewsFeeds.setLayoutManager(this.layoutManager);
         this.rcvNewsFeeds.setAdapter(this.mAdapter);
@@ -118,9 +170,49 @@ public abstract class AbsPlacesFragment extends Fragment {
         return rootView;
     }
 
-    private void onLikeClick(DatabaseReference ref) {
+    protected void onActionEditClick(String key, final PlaceModel place) {
+        Toast.makeText(getContext(), key, Toast.LENGTH_SHORT).show();
+    }
 
-        ref.keepSynced(true);
+    protected void onActionDeleteClick(final String key, final PlaceModel place) {
+        final AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        final FirebaseStorage storage = FirebaseStorage.getInstance();
+        builder.setTitle("Xóa địa điểm");
+        builder.setMessage("Bạn thật sự muốn xóa?");
+        builder.setPositiveButton("Xóa ngay", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+
+                Task<?>[] tasks = new Task[]{
+                        mDatabase.child(PhuotAppDatabase.PLACES).child(key).removeValue(),
+                        mDatabase.child(PhuotAppDatabase.USER_PLACES).child(mUser.getUid()).child(key).removeValue(),
+                        mDatabase.child(PhuotAppDatabase.LOCATION_PLACES).child(place.getLocation().getLocationKey()).child(key).removeValue()
+                };
+
+                Tasks.whenAll(tasks).addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Toast.makeText(getContext(), "Đã xóa thành công!", Toast.LENGTH_SHORT).show();
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+        });
+        builder.setNegativeButton("Không", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.cancel();
+            }
+        });
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();
+    }
+
+    private void onLikeClick(DatabaseReference ref) {
 
         ref.runTransaction(new Transaction.Handler() {
             @RequiresApi(api = Build.VERSION_CODES.M)
@@ -128,14 +220,14 @@ public abstract class AbsPlacesFragment extends Fragment {
             public Transaction.Result doTransaction(MutableData mutableData) {
 
                 PlaceModel place = mutableData.getValue(PlaceModel.class);
-                if(place == null) {
+                if (place == null) {
                     return Transaction.success(mutableData);
                 }
 
-                if(place.getLikes().containsKey(mUser.getUid())) {
+                if (place.getLikes().containsKey(mUser.getUid())) {
                     place.setCountLike(place.getCountLike() - 1);
                     place.getLikes().remove(mUser.getUid());
-                }else {
+                } else {
                     place.setCountLike(place.getCountLike() + 1);
                     place.getLikes().put(mUser.getUid(), true);
                 }
@@ -154,7 +246,7 @@ public abstract class AbsPlacesFragment extends Fragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if(this.mAdapter != null) {
+        if (this.mAdapter != null) {
             this.mAdapter.cleanup();
         }
     }

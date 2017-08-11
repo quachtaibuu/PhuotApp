@@ -87,7 +87,7 @@ public class LocationPickupActivity extends AppCompatActivity {
             @Override
             protected void populateViewHolder(LocationPickupViewHolder viewHolder, final LocationModel model, int position) {
                 DatabaseReference ref = getRef(position);
-                model.setId(ref.getKey());
+                model.setLocationKey(ref.getKey());
 
                 viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
                     @Override

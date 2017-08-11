@@ -44,6 +44,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -59,6 +60,7 @@ import com.google.gson.Gson;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -67,9 +69,9 @@ import java.util.Map;
 
 public class AddNewPlaceActivity extends BaseActivity implements OnMapReadyCallback, LocationListener {
 
-    private final int PICK_IMAGE_REQUEST = 1;
-    private final int PICK_LOCATION_REQUEST = 10;
-    private final int PICK_PLACE_REQUEST = 200;
+    public static final int PICK_IMAGE_REQUEST = 1;
+    public static final int PICK_LOCATION_REQUEST = 10;
+    public static final int PICK_PLACE_REQUEST = 100;
 
     private GoogleMap mMapPlace;
     private LocationManager locationManager;
@@ -87,6 +89,7 @@ public class AddNewPlaceActivity extends BaseActivity implements OnMapReadyCallb
 
     private LocationModel locationModelPickup;
     private DatabaseReference mDatabase;
+    private Marker mMarker;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -160,6 +163,7 @@ public class AddNewPlaceActivity extends BaseActivity implements OnMapReadyCallb
                         public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                             images.add(imgPath);
                             if(images.size() == lstUriImageChoosen.size()) {
+
                                 DatabaseReference reference = mDatabase.child("places");
                                 String key = reference.push().getKey();
 
@@ -178,7 +182,7 @@ public class AddNewPlaceActivity extends BaseActivity implements OnMapReadyCallb
                                 Map<String, Object> childUpdates = new HashMap<>();
                                 childUpdates.put("/places/" + key, placeModel.toMap());
                                 childUpdates.put("/user-places/" + getUserId() + "/" + key, placeValues);
-                                childUpdates.put("/location-places/" + locationModelPickup.getId() + "/" + key, placeValues);
+                                childUpdates.put("/location-places/" + locationModelPickup.getLocationKey() + "/" + key, placeValues);
 
                                 mDatabase.updateChildren(childUpdates);
 
@@ -217,10 +221,13 @@ public class AddNewPlaceActivity extends BaseActivity implements OnMapReadyCallb
     }
 
     private void setLocationMaker(LatLng latLng) {
+        if(this.mMarker != null) {
+            this.mMarker.remove();
+        }
         this.currentLatLng = latLng;
-        MarkerOptions marker = new MarkerOptions();
-        marker.position(latLng);
-        this.mMapPlace.addMarker(marker);
+        MarkerOptions markerOptions = new MarkerOptions();
+        markerOptions.position(latLng);
+        this.mMarker = this.mMapPlace.addMarker(markerOptions);
         this.mMapPlace.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
         try {
             Geocoder geocoder = new Geocoder(getApplicationContext(), Locale.getDefault());
@@ -269,9 +276,7 @@ public class AddNewPlaceActivity extends BaseActivity implements OnMapReadyCallb
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK && data != null) {
             if (requestCode == this.PICK_PLACE_REQUEST) {
-                Double lat = data.getDoubleExtra("latitude", 0);
-                Double lng = data.getDoubleExtra("longitude", 0);
-                this.currentLatLng = new LatLng(lat, lng);
+                this.currentLatLng = new Gson().fromJson(data.getStringExtra("latLngPickup"), LatLng.class);
                 this.setLocationMaker(this.currentLatLng);
             }else if (requestCode == this.PICK_IMAGE_REQUEST) {
                 if (data.getData() != null) {
@@ -293,6 +298,7 @@ public class AddNewPlaceActivity extends BaseActivity implements OnMapReadyCallb
 
     public void tvAddNewPlaceChoosenLocation_OnClick(View v) {
         Intent intent = new Intent(this, MapsActivity.class);
+        intent.putExtra("currentLatLng", new Gson().toJson(currentLatLng));
         startActivityForResult(intent, PICK_PLACE_REQUEST);
     }
 
