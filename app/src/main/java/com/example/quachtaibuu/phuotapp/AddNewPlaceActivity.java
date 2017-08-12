@@ -396,7 +396,7 @@ public class AddNewPlaceActivity extends BaseActivity implements OnMapReadyCallb
         //placeModel.setImages(images);
         placeModel.setLocation(locationModelPickup);
 
-        if(this.mMapPlace != null) {
+        if(this.mPlaceModel == null) {
             placeModel.setUser(this.getCurrentUser());
         }
 

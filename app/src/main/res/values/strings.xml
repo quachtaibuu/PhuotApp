@@ -19,7 +19,7 @@
     <string name="navigation_place">Khám phá</string>
     <string name="navigation_add">Bài mới</string>
     <string name="navigation_search">Tìm kiếm</string>
-    <string name="navigation_fav">Yêu thích</string>
+    <string name="navigation_fav">Đánh dấu</string>
     <string name="navigation_notifications">Thông báo</string>
 
     <string name="action_logout">Đăng xuất</string>

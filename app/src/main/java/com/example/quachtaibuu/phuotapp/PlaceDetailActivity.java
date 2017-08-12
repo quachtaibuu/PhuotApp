@@ -107,41 +107,18 @@ public class PlaceDetailActivity extends BaseActivity implements OnMapReadyCallb
                     final PlaceModel place = mutableData.getValue(PlaceModel.class);
 
                     if (place == null) {
-
-                        DatabaseReference placeRef = mDatabase.child(PhuotAppDatabase.PLACES).child(ref.getKey());
-                        placeRef.addListenerForSingleValueEvent(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(DataSnapshot dataSnapshot) {
-
-                                PlaceModel place = dataSnapshot.getValue(PlaceModel.class);
-
-                                if(!place.getBookmarks().containsKey(getUserId())) {
-                                    ref.setValue(place);
-                                }else {
-                                    ref.removeValue();
-                                }
-
-                            }
-
-                            @Override
-                            public void onCancelled(DatabaseError databaseError) {
-
-                            }
-                        });
-
-                    }else {
-
-                        if (place.getBookmarks().containsKey(getUserId())) {
-                            place.setCountBookmark(place.getCountBookmark() - 1);
-                            place.getBookmarks().remove(getUserId());
-                        } else {
-                            place.setCountBookmark(place.getCountBookmark() + 1);
-                            place.getBookmarks().put(getUserId(), true);
-                        }
-
-                        mutableData.setValue(place);
+                        return Transaction.success(mutableData);
                     }
 
+                    if (place.getBookmarks().containsKey(getUserId())) {
+                        place.setCountBookmark(place.getCountBookmark() - 1);
+                        place.getBookmarks().remove(getUserId());
+                    } else {
+                        place.setCountBookmark(place.getCountBookmark() + 1);
+                        place.getBookmarks().put(getUserId(), true);
+                    }
+
+                    mutableData.setValue(place);
                     return Transaction.success(mutableData);
                 }
 
@@ -158,6 +135,33 @@ public class PlaceDetailActivity extends BaseActivity implements OnMapReadyCallb
             return tcs.getTask();
         }
 
+        private Task<DataSnapshot> modifiedBookmark(final DatabaseReference ref) {
+
+            final TaskCompletionSource<DataSnapshot> taskCompletionSource = new TaskCompletionSource<>();
+
+            DatabaseReference placeRef = mDatabase.child(PhuotAppDatabase.PLACES).child(ref.getKey());
+            placeRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    PlaceModel place = dataSnapshot.getValue(PlaceModel.class);
+                    if(place.getBookmarks().containsKey(getUserId())) {
+                        ref.setValue(place);
+                    }else {
+                        ref.removeValue();
+                    }
+                    taskCompletionSource.setResult(dataSnapshot);
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                    taskCompletionSource.setException(new DatabaseException(databaseError.getMessage()));
+                }
+            });
+
+            return taskCompletionSource.getTask();
+
+        }
+
         @Override
         public void onClick(View view) {
             DatabaseReference userBookmarksRef = mDatabase.child(PhuotAppDatabase.USER_BOOKMARKS).child(getUserId()).child(mPlaceKey);
@@ -166,11 +170,10 @@ public class PlaceDetailActivity extends BaseActivity implements OnMapReadyCallb
             DatabaseReference locationPlacesRef = mDatabase.child(PhuotAppDatabase.LOCATION_PLACES).child(placeModel.getLocation().getLocationKey()).child(mPlaceKey);
 
             Task<DataSnapshot> updateTasks[] = new Task[]{
-                    //userBookmarksRef.setValue(placeModel),
-                    //updateBookmark(userBookmarksRef),
-                    //updateBookmark(placesRef),
-                    updateBookmark(userPlacesRef)
-                    //updateBookmark(locationPlacesRef)
+                    updateBookmark(placesRef),
+                    updateBookmark(userPlacesRef),
+                    updateBookmark(locationPlacesRef),
+                    modifiedBookmark(userBookmarksRef)
             };
 
             Tasks.whenAll(updateTasks).addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -184,7 +187,7 @@ public class PlaceDetailActivity extends BaseActivity implements OnMapReadyCallb
                     Toast.makeText(PlaceDetailActivity.this, "Bookmark: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                 }
             });
-            
+
         }
     };
 
@@ -237,9 +240,9 @@ public class PlaceDetailActivity extends BaseActivity implements OnMapReadyCallb
 
                 if (placeModel != null) {
 
-                    if(placeModel.getBookmarks().containsKey(getUserId())) {
+                    if (placeModel.getBookmarks().containsKey(getUserId())) {
                         btnPlaceDetailBookmark.setImageResource(R.drawable.ic_bookmark_black_24dp);
-                    }else {
+                    } else {
                         btnPlaceDetailBookmark.setImageResource(R.drawable.ic_bookmark_border_black_24dp);
                     }
 

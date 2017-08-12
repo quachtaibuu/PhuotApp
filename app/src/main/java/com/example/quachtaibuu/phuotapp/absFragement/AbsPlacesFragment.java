@@ -103,12 +103,11 @@ public abstract class AbsPlacesFragment extends Fragment {
 
                 if (model.getLikes().containsKey(mUser.getUid())) {
                     viewHolder.btnItemNewsLike.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_favorite_black_24dp, 0, 0, 0);
+                    if (!mSessionUser.isAdmin()) {
+                        viewHolder.btnItemNewsEdit.setVisibility(View.INVISIBLE);
+                    }
                 } else {
                     viewHolder.btnItemNewsLike.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_favorite_border_black_24dp, 0, 0, 0);
-                }
-
-                if (!model.getUser().getEmail().contains(mUser.getEmail()) && !mSessionUser.isAdmin()) {
-                    viewHolder.btnItemNewsEdit.setVisibility(View.INVISIBLE);
                 }
 
                 viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
