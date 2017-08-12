@@ -33,16 +33,16 @@
                         android:layout_marginBottom="50dp"
                         android:layout_alignParentBottom="true" />
 
-                    <android.support.design.widget.FloatingActionButton
-                        android:id="@+id/btnPlaceDetailLike"
+                    <ImageView
+                        android:id="@+id/btnPlaceDetailBookmark"
                         android:layout_width="48dp"
                         android:layout_height="48dp"
                         android:layout_alignParentBottom="true"
                         android:layout_alignParentEnd="true"
                         android:layout_marginRight="10dp"
                         android:layout_marginBottom="35dp"
-                        app:srcCompat="@drawable/ic_favorite_border_black_24dp"
-                        android:tint="@android:color/white"/>
+                        app:srcCompat="@drawable/ic_bookmark_border_black_24dp"
+                        android:tint="@color/colorAccent"/>
 
                     <TextView
                         android:id="@+id/tvPlaceDetailTitle"

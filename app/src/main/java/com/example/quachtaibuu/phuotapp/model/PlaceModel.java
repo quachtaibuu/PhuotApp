@@ -1,8 +1,12 @@
 package com.example.quachtaibuu.phuotapp.model;
 
-import com.google.firebase.database.IgnoreExtraProperties;
+import android.support.annotation.NonNull;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -13,13 +17,17 @@ import java.util.Objects;
  * Created by Quach Tai Buu on 2017-08-01.
  */
 
-public class PlaceModel {
+public class PlaceModel implements Comparable<PlaceModel> {
+
+    @JsonIgnore
+    private String id;
 
     private String title;
     private long created;
 
     private int countLike;
     private int countComment;
+    private int countBookmark;
 
     private double latitude;
     private double longitude;
@@ -31,8 +39,16 @@ public class PlaceModel {
     private String description;
 
     private Map<String, Boolean> likes = new HashMap<>();
+    private Map<String, Boolean> bookmarks = new HashMap<>();
     private List<String> images = new ArrayList<>();
 
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
 
     public String getTitle() {
         return title;
@@ -130,6 +146,39 @@ public class PlaceModel {
         this.images = images;
     }
 
+    public int getCountBookmark() {
+        return countBookmark;
+    }
+
+    public void setCountBookmark(int countBookmark) {
+        this.countBookmark = countBookmark;
+    }
+
+    public Map<String, Boolean> getBookmarks() {
+        return bookmarks;
+    }
+
+    public void setBookmarks(Map<String, Boolean> bookmarks) {
+        this.bookmarks = bookmarks;
+    }
+
+    public void setPlaceModel(PlaceModel model) {
+        this.setImages(model.getImages());
+        this.setCountComment(model.getCountComment());
+        this.setUser(model.getUser());
+        this.setCountLike(model.getCountLike());
+        this.setDescription(model.getDescription());
+        this.setAddress(model.getAddress());
+        this.setCreated(model.getCreated());
+        this.setLatitude(model.getLatitude());
+        this.setLikes(model.getLikes());
+        this.setLocation(model.getLocation());
+        this.setLongitude(model.getLongitude());
+        this.setTitle(model.getTitle());
+        this.setBookmarks(model.getBookmarks());
+        this.setCountBookmark(model.getCountBookmark());
+    }
+
     @Override
     public String toString() {
         return "PlaceModel{" +
@@ -160,6 +209,11 @@ public class PlaceModel {
         result.put("images", this.images);
         result.put("user", this.user);
         return  result;
+    }
+
+    @Override
+    public int compareTo(@NonNull PlaceModel placeModel) {
+        return this.getTitle().compareTo(placeModel.getTitle());
     }
 
 //    public List<String> getImagesAsList() {

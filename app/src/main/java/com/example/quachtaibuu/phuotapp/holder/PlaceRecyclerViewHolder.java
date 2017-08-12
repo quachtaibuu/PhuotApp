@@ -1,5 +1,6 @@
 package com.example.quachtaibuu.phuotapp.holder;
 
+import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.Button;
@@ -33,7 +34,7 @@ public class PlaceRecyclerViewHolder extends RecyclerView.ViewHolder {
 
     public Button btnItemNewsLike;
     public Button btnItemNewsComment;
-    public Button btnItemNewsEdit;
+    public ImageView btnItemNewsEdit;
 
     public interface OnButtonClickListenser {
         void ButtonLike_OnClick(View view);
@@ -56,7 +57,9 @@ public class PlaceRecyclerViewHolder extends RecyclerView.ViewHolder {
 
         this.btnItemNewsLike = (Button) itemView.findViewById(R.id.btnItemNewsLike);
         this.btnItemNewsComment = (Button) itemView.findViewById(R.id.btnItemNewsComment);
-        this.btnItemNewsEdit = (Button)itemView.findViewById(R.id.btnItemNewsEdit);
+        this.btnItemNewsEdit = (ImageView)itemView.findViewById(R.id.btnItemNewsEdit);
+
+        this.tvItemNewsTitle.setShadowLayer(30, 0, 0, Color.RED);
     }
 
 

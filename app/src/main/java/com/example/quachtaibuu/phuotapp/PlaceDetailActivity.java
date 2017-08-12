@@ -9,6 +9,7 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Build;
 import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
@@ -17,6 +18,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -33,6 +35,7 @@ import com.akexorcist.googledirection.model.Step;
 import com.akexorcist.googledirection.util.DirectionConverter;
 import com.example.quachtaibuu.phuotapp.adapter.PlaceImageAdapter;
 import com.example.quachtaibuu.phuotapp.model.PlaceModel;
+import com.example.quachtaibuu.phuotapp.utils.PhuotAppDatabase;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -40,8 +43,14 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.TaskCompletionSource;
+import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseException;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.MutableData;
@@ -70,7 +79,7 @@ public class PlaceDetailActivity extends BaseActivity implements OnMapReadyCallb
     private TextView tvPlaceDetailDescription;
     private TextView tvPlaceDetailDistance;
     private TextView tvPlaceDetailDuranction;
-    private FloatingActionButton btnPlaceDetailLike;
+    private ImageView btnPlaceDetailBookmark;
 
     private PlaceModel placeModel;
     private GoogleMap mMap;
@@ -84,53 +93,98 @@ public class PlaceDetailActivity extends BaseActivity implements OnMapReadyCallb
     private DatabaseReference mPlaceRefernce;
     private ValueEventListener mPlaceListener;
 
-    private View.OnClickListener btnPlaceDetailLike_OnClick = new View.OnClickListener() {
+    private View.OnClickListener btnPlaceDetailBookmark_OnClick = new View.OnClickListener() {
 
-        private void onLikeClick(DatabaseReference ref) {
+        private Task<DataSnapshot> updateBookmark(final DatabaseReference ref) {
+
+            final TaskCompletionSource<DataSnapshot> tcs = new TaskCompletionSource<>();
+
             ref.runTransaction(new Transaction.Handler() {
                 @RequiresApi(api = Build.VERSION_CODES.M)
                 @Override
                 public Transaction.Result doTransaction(MutableData mutableData) {
 
-                    PlaceModel place = mutableData.getValue(PlaceModel.class);
-                    if(place == null) {
-                        return Transaction.success(mutableData);
-                    }
+                    final PlaceModel place = mutableData.getValue(PlaceModel.class);
 
-                    if(place.getLikes().containsKey(getUserId())) {
-                        place.setCountLike(place.getCountLike() - 1);
-                        place.getLikes().remove(getUserId());
-                        //btnPlaceDetailLike.setBackgroundColor(getColor(R.color.colorAccent));
-                        //btnPlaceDetailLike.setImageResource(R.drawable.ic_favorite_border_white_24dp);
+                    if (place == null) {
+
+                        DatabaseReference placeRef = mDatabase.child(PhuotAppDatabase.PLACES).child(ref.getKey());
+                        placeRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                                PlaceModel place = dataSnapshot.getValue(PlaceModel.class);
+
+                                if(!place.getBookmarks().containsKey(getUserId())) {
+                                    ref.setValue(place);
+                                }else {
+                                    ref.removeValue();
+                                }
+
+                            }
+
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+
+                            }
+                        });
+
                     }else {
-                        place.setCountLike(place.getCountLike() + 1);
-                        place.getLikes().put(getUserId(), true);
-                        //btnPlaceDetailLike.setBackgroundColor(getColor(R.color.colorWhite));
-                        //btnPlaceDetailLike.setImageResource(R.drawable.ic_favorite_border_black_24dp);
+
+                        if (place.getBookmarks().containsKey(getUserId())) {
+                            place.setCountBookmark(place.getCountBookmark() - 1);
+                            place.getBookmarks().remove(getUserId());
+                        } else {
+                            place.setCountBookmark(place.getCountBookmark() + 1);
+                            place.getBookmarks().put(getUserId(), true);
+                        }
+
+                        mutableData.setValue(place);
                     }
 
-                    mutableData.setValue(place);
                     return Transaction.success(mutableData);
                 }
 
                 @Override
                 public void onComplete(DatabaseError databaseError, boolean b, DataSnapshot dataSnapshot) {
-
+                    if (b) {
+                        tcs.setResult(dataSnapshot);
+                    } else {
+                        tcs.setException(new IllegalArgumentException(databaseError.getMessage()));
+                    }
                 }
             });
+
+            return tcs.getTask();
         }
 
         @Override
         public void onClick(View view) {
-            DatabaseReference userLikeRef = mDatabase.child("user-likes").child(getUserId()).child(mPlaceKey);
-            DatabaseReference placesRef = mDatabase.child("places").child(mPlaceKey);
-            DatabaseReference userPlacesRef = mDatabase.child("user-places").child(getUserId()).child(mPlaceKey);
-            DatabaseReference locationPlacesRef = mDatabase.child("location-places").child(mPlaceKey);
+            DatabaseReference userBookmarksRef = mDatabase.child(PhuotAppDatabase.USER_BOOKMARKS).child(getUserId()).child(mPlaceKey);
+            DatabaseReference placesRef = mDatabase.child(PhuotAppDatabase.PLACES).child(mPlaceKey);
+            DatabaseReference userPlacesRef = mDatabase.child(PhuotAppDatabase.USER_PLACES).child(placeModel.getUser().getUserKey()).child(mPlaceKey);
+            DatabaseReference locationPlacesRef = mDatabase.child(PhuotAppDatabase.LOCATION_PLACES).child(placeModel.getLocation().getLocationKey()).child(mPlaceKey);
 
-            onLikeClick(userLikeRef);
-            onLikeClick(placesRef);
-            onLikeClick(userPlacesRef);
-            onLikeClick(locationPlacesRef);
+            Task<DataSnapshot> updateTasks[] = new Task[]{
+                    //userBookmarksRef.setValue(placeModel),
+                    //updateBookmark(userBookmarksRef),
+                    //updateBookmark(placesRef),
+                    updateBookmark(userPlacesRef)
+                    //updateBookmark(locationPlacesRef)
+            };
+
+            Tasks.whenAll(updateTasks).addOnSuccessListener(new OnSuccessListener<Void>() {
+                @Override
+                public void onSuccess(Void aVoid) {
+                    Toast.makeText(PlaceDetailActivity.this, getString(R.string.msgSuccessBookmarkSaved), Toast.LENGTH_SHORT).show();
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Toast.makeText(PlaceDetailActivity.this, "Bookmark: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            });
+            
         }
     };
 
@@ -141,7 +195,7 @@ public class PlaceDetailActivity extends BaseActivity implements OnMapReadyCallb
         setContentView(R.layout.activity_place_detail);
 
         this.mPlaceKey = getIntent().getStringExtra(this.EXTRA_PLACE_KEY);
-        if(this.mPlaceKey == null) {
+        if (this.mPlaceKey == null) {
             throw new IllegalArgumentException("Key not found!");
         }
 
@@ -153,14 +207,14 @@ public class PlaceDetailActivity extends BaseActivity implements OnMapReadyCallb
         this.mPlaceRefernce = this.mDatabase.child("places").child(this.mPlaceKey);
         //this.placeImageAdapter = new PlaceImageAdapter(this, this.lstData);
 
-        this.tvPlaceDetailAddress = (TextView)findViewById(R.id.tvPlaceDetailAddress);
-        this.tvPlaceDetailDescription = (TextView)findViewById(R.id.tvPlaceDetailDescription);
-        this.tvPlaceDetailTitle = (TextView)findViewById(R.id.tvPlaceDetailTitle);
-        this.tvPlaceDetailDistance = (TextView)findViewById(R.id.tvPlaceDetailDistance);
-        this.tvPlaceDetailDuranction = (TextView)findViewById(R.id.tvPlaceDetailDuration);
+        this.tvPlaceDetailAddress = (TextView) findViewById(R.id.tvPlaceDetailAddress);
+        this.tvPlaceDetailDescription = (TextView) findViewById(R.id.tvPlaceDetailDescription);
+        this.tvPlaceDetailTitle = (TextView) findViewById(R.id.tvPlaceDetailTitle);
+        this.tvPlaceDetailDistance = (TextView) findViewById(R.id.tvPlaceDetailDistance);
+        this.tvPlaceDetailDuranction = (TextView) findViewById(R.id.tvPlaceDetailDuration);
 
-        this.btnPlaceDetailLike = (FloatingActionButton)findViewById(R.id.btnPlaceDetailLike);
-        this.btnPlaceDetailLike.setOnClickListener(this.btnPlaceDetailLike_OnClick);
+        this.btnPlaceDetailBookmark = (ImageView) findViewById(R.id.btnPlaceDetailBookmark);
+        this.btnPlaceDetailBookmark.setOnClickListener(this.btnPlaceDetailBookmark_OnClick);
 
         this.vpPlaceDetailImages = (ViewPager) findViewById(R.id.vpPlaceDetailImages);
         this.ciPlaceDetailImages = (CircleIndicator) findViewById(R.id.ciPlaceDetailImages);
@@ -181,10 +235,17 @@ public class PlaceDetailActivity extends BaseActivity implements OnMapReadyCallb
 
                 placeModel = dataSnapshot.getValue(PlaceModel.class);
 
-                if(placeModel != null) {
+                if (placeModel != null) {
+
+                    if(placeModel.getBookmarks().containsKey(getUserId())) {
+                        btnPlaceDetailBookmark.setImageResource(R.drawable.ic_bookmark_black_24dp);
+                    }else {
+                        btnPlaceDetailBookmark.setImageResource(R.drawable.ic_bookmark_border_black_24dp);
+                    }
+
                     LatLng latLngCheck = new LatLng(placeModel.getLatitude(), placeModel.getLongitude());
 
-                    if(latLngCurrent != null && latLngCheck != latLngPlace) {
+                    if (latLngCurrent != null && latLngCheck != latLngPlace) {
                         getDirection(latLngCurrent, latLngPlace);
                     }
 
@@ -217,7 +278,7 @@ public class PlaceDetailActivity extends BaseActivity implements OnMapReadyCallb
     @Override
     protected void onStop() {
         super.onStop();
-        if(this.mPlaceRefernce != null) {
+        if (this.mPlaceRefernce != null) {
             this.mPlaceRefernce.removeEventListener(this.mPlaceListener);
         }
     }
@@ -253,7 +314,7 @@ public class PlaceDetailActivity extends BaseActivity implements OnMapReadyCallb
                 .execute(new DirectionCallback() {
                     @Override
                     public void onDirectionSuccess(Direction direction, String rawBody) {
-                        if(direction.isOK()) {
+                        if (direction.isOK()) {
                             List<Route> routes = direction.getRouteList();
                             Route route = routes.get(0);
                             List<Leg> legs = route.getLegList();
@@ -283,7 +344,7 @@ public class PlaceDetailActivity extends BaseActivity implements OnMapReadyCallb
 
     @Override
     public void onLocationChanged(Location location) {
-        if(location != null) {
+        if (location != null) {
             this.latLngCurrent = new LatLng(location.getLatitude(), location.getLongitude());
             getDirection(latLngCurrent, latLngPlace);
 

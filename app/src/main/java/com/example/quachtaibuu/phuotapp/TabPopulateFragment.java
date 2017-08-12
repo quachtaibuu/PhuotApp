@@ -25,8 +25,6 @@ public class TabPopulateFragment extends AbsPlacesFragment {
 
     @Override
     public Query getQuery(DatabaseReference databaseReference) {
-        return databaseReference.child("places")
-                .orderByChild("countLike")
-                .limitToFirst(100);
+        return databaseReference.child("places").orderByChild("countLike").limitToFirst(100);
     }
 }

@@ -25,7 +25,8 @@
     <string name="action_logout">Đăng xuất</string>
     <string name="action_search">Tìm kiếm</string>
 
-    <string name="menuAddNewPlaceAdd">Thêm</string>
+    <string name="action_place_add">Thêm</string>
+    <string name="action_place_edit">Cập nhật</string>
 
     <string name="tvItemNewsLike">lượt thích</string>
     <string name="tvItemNewsComment">nhận xét</string>
@@ -52,8 +53,18 @@
     <string name="msgRequestGrant">Cấp phép</string>
     <string name="msgSuccessInsertedForPlace">Thông tin địa điểm đã được thêm!</string>
     <string name="msgSuccessInsertedForComment">Đã trả lời bài viết!</string>
+    <string name="msgSuccessBookmarkSaved">Đã đánh dấu địa điểm</string>
     <string name="msgLoading">Đang xử lý thông tin...</string>
     <string name="msgUnableLoadImage">Không thể tải hình ảnh</string>
+    <string name="msgTitleDeletePlace">Xóa địa điểm</string>
+    <string name="msgConfirmDelete">Bạn thật sự muốn xóa?</string>
+    <string name="msgPositiveButton">Chắc chắn</string>
+    <string name="msgNegativeButton">Không</string>
+
+    <string name="msgErrorInputRequired">Không được trống</string>
+    <string name="msgErrorLocationPickupRequired">Chưa chọn khu vực</string>
+    <string name="msgErrorMapPickupRequired">Chưa chọn vị trí bản đồ</string>
+    <string name="msgErrorImagePickupRequest">Chưa chọn hình ảnh</string>
 
     <string name="titleChooseImage">Chọn hình ảnh</string>
 
@@ -62,5 +73,7 @@
     <string name="tvPlaceDetailDistance">Khoảng cách</string>
     <string name="tvPlaceDetailDuration">Thời gian</string>
     <string name="title_activity_search_place">SearchPlaceActivity</string>
+
+
 
 </resources>

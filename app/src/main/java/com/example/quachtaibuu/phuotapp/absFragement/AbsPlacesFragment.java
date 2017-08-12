@@ -21,12 +21,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.example.quachtaibuu.phuotapp.AddNewPlaceActivity;
+import com.example.quachtaibuu.phuotapp.BaseActivity;
 import com.example.quachtaibuu.phuotapp.PlaceCommentActivity;
 import com.example.quachtaibuu.phuotapp.PlaceDetailActivity;
 import com.example.quachtaibuu.phuotapp.R;
 import com.example.quachtaibuu.phuotapp.holder.PlaceRecyclerViewHolder;
 import com.example.quachtaibuu.phuotapp.model.PlaceModel;
+import com.example.quachtaibuu.phuotapp.model.UserModel;
 import com.example.quachtaibuu.phuotapp.utils.PhuotAppDatabase;
+import com.example.quachtaibuu.phuotapp.utils.UserSessionManager;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -45,6 +49,7 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
+import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -64,6 +69,8 @@ public abstract class AbsPlacesFragment extends Fragment {
     private boolean isFirstTime = true;
 
     private String mPlaceKey;
+    private UserSessionManager mSession;
+    private UserModel mSessionUser;
 
     @Nullable
     @Override
@@ -73,6 +80,20 @@ public abstract class AbsPlacesFragment extends Fragment {
         //this.loadData();
         this.mDatabase = FirebaseDatabase.getInstance().getReference();
         Query postQuery = this.getQuery(this.mDatabase); //this.mDatabase.child("places").orderByChild("created").limitToFirst(100);
+        this.mSession = new UserSessionManager(getContext().getApplicationContext());
+        this.mSessionUser = this.mSession.getUserDetails();
+
+        this.mDatabase.child(PhuotAppDatabase.USERS).child(mUser.getUid()).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
 
         this.mAdapter = new FirebaseRecyclerAdapter<PlaceModel, PlaceRecyclerViewHolder>(PlaceModel.class, R.layout.item_news, PlaceRecyclerViewHolder.class, postQuery) {
 
@@ -86,7 +107,7 @@ public abstract class AbsPlacesFragment extends Fragment {
                     viewHolder.btnItemNewsLike.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_favorite_border_black_24dp, 0, 0, 0);
                 }
 
-                if (!model.getUser().getEmail().contains(mUser.getEmail())) {
+                if (!model.getUser().getEmail().contains(mUser.getEmail()) && !mSessionUser.isAdmin()) {
                     viewHolder.btnItemNewsEdit.setVisibility(View.INVISIBLE);
                 }
 
@@ -132,10 +153,10 @@ public abstract class AbsPlacesFragment extends Fragment {
                             public boolean onMenuItemClick(MenuItem item) {
                                 switch (item.getItemId()) {
                                     case R.id.action_post_delete:
-                                        onActionDeleteClick(ref.getKey(), model);
+                                        onActionDeleteClick(mPlaceKey, model);
                                         break;
                                     case R.id.action_post_edit:
-                                        onActionEditClick(ref.getKey(), model);
+                                        onActionEditClick(mPlaceKey, model);
                                         break;
                                 }
                                 return true;
@@ -146,18 +167,8 @@ public abstract class AbsPlacesFragment extends Fragment {
                     }
                 });
 
-//                if(isFirstTime) {
-//                    isFirstTime = false;
-//                    rcvNewsFeeds.smoothScrollToPosition(getItemCount() - 1);
-//                    layoutManager.scrollToPosition(getItemCount() - 1);
-//                }
-
             }
 
-//            @Override
-//            public long getItemId(int position) {
-//                return super.getItemId(getItemCount() - (position + 1));
-//            }
         };
 
 
@@ -171,15 +182,18 @@ public abstract class AbsPlacesFragment extends Fragment {
     }
 
     protected void onActionEditClick(String key, final PlaceModel place) {
-        Toast.makeText(getContext(), key, Toast.LENGTH_SHORT).show();
+        Intent intent = new Intent(getContext(), AddNewPlaceActivity.class);
+        intent.putExtra("place", new Gson().toJson(place));
+        intent.putExtra("placeKey", key);
+        startActivity(intent);
     }
 
     protected void onActionDeleteClick(final String key, final PlaceModel place) {
         final AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         final FirebaseStorage storage = FirebaseStorage.getInstance();
-        builder.setTitle("Xóa địa điểm");
-        builder.setMessage("Bạn thật sự muốn xóa?");
-        builder.setPositiveButton("Xóa ngay", new DialogInterface.OnClickListener() {
+        builder.setTitle(getString(R.string.msgTitleDeletePlace));
+        builder.setMessage(getString(R.string.msgConfirmDelete));
+        builder.setPositiveButton(getString(R.string.msgPositiveButton), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
 
@@ -202,7 +216,7 @@ public abstract class AbsPlacesFragment extends Fragment {
                 });
             }
         });
-        builder.setNegativeButton("Không", new DialogInterface.OnClickListener() {
+        builder.setNegativeButton(getString(R.string.msgNegativeButton), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 dialogInterface.cancel();

@@ -3,8 +3,15 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/menuAddNewPlaceAdd"
-        android:title="@string/menuAddNewPlaceAdd"
-        app:showAsAction="always"/>
+        android:id="@+id/action_place_add"
+        android:title="@string/action_place_add"
+        app:showAsAction="always"
+        android:visible="false"/>
+
+    <item android:id="@+id/action_place_edit"
+        android:title="@string/action_place_edit"
+        app:showAsAction="always"
+        android:visible="false"
+        />
 
 </menu>

@@ -79,9 +79,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 2500, 10, this);
 
         Intent intent = getIntent();
-        if(intent != null) {
-            latLngPickup = new Gson().fromJson(intent.getStringExtra("currentLatLng"), LatLng.class);
-            setLocationMaker(latLngPickup);
+        if (intent != null) {
+            String currentLatLng = intent.getStringExtra("currentLatLng");
+            if (!currentLatLng.isEmpty()) {
+                latLngPickup = new Gson().fromJson(currentLatLng, LatLng.class);
+                setLocationMaker(latLngPickup);
+            }
         }
 
         mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
@@ -95,7 +98,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     private void setLocationMaker(LatLng latLng) {
-        if(mMaker != null) {
+        if(latLng == null) {
+            return;
+        }
+        if (mMaker != null) {
             mMaker.remove();
         }
         Geocoder geocoder = new Geocoder(getApplicationContext(), Locale.getDefault());
@@ -108,6 +114,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             e.printStackTrace();
         }
         mMaker = mMap.addMarker(markerOptions);
+        this.mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
     }
 
     @Override

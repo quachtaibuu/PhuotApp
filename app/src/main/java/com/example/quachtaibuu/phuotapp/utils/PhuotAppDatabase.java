@@ -11,5 +11,5 @@ public class PhuotAppDatabase {
     public static final String LOCATIONS = "locations";
     public static final String PLACE_COMMENTS = "place-comments";
     public static final String USERS = "users";
-    public static final String USER_LIKES = "user-likes";
+    public static final String USER_BOOKMARKS = "user-bookmarks";
 }

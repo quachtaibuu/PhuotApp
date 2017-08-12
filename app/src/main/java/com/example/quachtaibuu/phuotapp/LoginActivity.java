@@ -18,6 +18,8 @@ import com.bumptech.glide.request.target.SimpleTarget;
 import com.example.quachtaibuu.phuotapp.model.UserModel;
 import com.example.quachtaibuu.phuotapp.utils.AbsRuntimePermission;
 import com.example.quachtaibuu.phuotapp.utils.ImageUtils;
+import com.example.quachtaibuu.phuotapp.utils.PhuotAppDatabase;
+import com.example.quachtaibuu.phuotapp.utils.UserSessionManager;
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
@@ -75,6 +77,7 @@ public class LoginActivity extends AbsRuntimePermission {
 
     private DatabaseReference mDatabase;
     private StorageReference mStorage;
+    private UserSessionManager mSession;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,6 +89,7 @@ public class LoginActivity extends AbsRuntimePermission {
         this.mCallbackManager = CallbackManager.Factory.create();
         this.mDatabase = FirebaseDatabase.getInstance().getReference();
         this.mStorage = FirebaseStorage.getInstance().getReference();
+        this.mSession = new UserSessionManager(getApplicationContext());
 
         LoginManager.getInstance().registerCallback(this.mCallbackManager, new FacebookCallback<LoginResult>() {
             @Override
@@ -211,6 +215,31 @@ public class LoginActivity extends AbsRuntimePermission {
     }
 
     private void doRegister(final FirebaseUser user) {
+
+        mDatabase.child(PhuotAppDatabase.USERS).child(user.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                UserModel model = dataSnapshot.getValue(UserModel.class);
+                if (model != null) {
+                    if(!mSession.isLogged()) {
+                        model.setUserKey(dataSnapshot.getKey());
+                        mSession.createUserInfo(model);
+                    }
+                    startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                    return;
+                }
+                createUser(user);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+    }
+
+    private void createUser(final FirebaseUser user) {
         final UserModel userModel = new UserModel(user.getDisplayName(), user.getEmail(), usernameFromEmail(user.getEmail()), null);
 
         ImageUtils.getFileFromUrl(LoginActivity.this, user.getPhotoUrl(), new ImageUtils.OnGetFileListener() {

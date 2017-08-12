@@ -4,6 +4,7 @@ import android.app.ProgressDialog;
 import android.support.v7.app.AppCompatActivity;
 
 import com.example.quachtaibuu.phuotapp.model.UserModel;
+import com.example.quachtaibuu.phuotapp.utils.UserSessionManager;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -18,24 +19,14 @@ import com.google.firebase.database.ValueEventListener;
 public class BaseActivity extends AppCompatActivity {
 
     private ProgressDialog mProgressDialog;
-    private UserModel userModel;
+    private UserModel mUser;
+    private UserSessionManager mSession;
 
     @Override
     protected void onStart() {
         super.onStart();
-        if(getUserId() != null) {
-            FirebaseDatabase.getInstance().getReference("users").child(getUserId()).addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    userModel = dataSnapshot.getValue(UserModel.class);
-                }
-
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-
-                }
-            });
-        }
+        this.mSession = new UserSessionManager(getApplicationContext());
+        this.mUser = this.mSession.getUserDetails();
     }
 
     public void showProgressDialog() {
@@ -55,15 +46,11 @@ public class BaseActivity extends AppCompatActivity {
 
 
     public UserModel getCurrentUser() {
-        return userModel;
+        return this.mUser;
     }
 
     public String getUserId() {
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        if(user != null) {
-            return user.getUid();
-        }
-        return null;
+        return this.mUser.getUserKey();
     }
 
 

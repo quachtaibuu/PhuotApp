@@ -76,7 +76,7 @@ public class PlaceCommentActivity extends BaseActivity {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         this.mDatabase = FirebaseDatabase.getInstance().getReference();
-        this.mQuery = this.mDatabase.child("place-comments").child(this.mPlaceKey).orderByKey();
+        this.mQuery = this.mDatabase.child("place-comments").child(this.mPlaceKey).orderByChild("created").limitToLast(100);
         this.edPlaceCommentBody = (EditText) findViewById(R.id.edPlaceCommentBody);
         this.btnPlaceCommentPost = (Button) findViewById(R.id.btnPlaceCommentPost);
         this.rcvPlaceCommentPost = (RecyclerView) findViewById(R.id.rcvPlaceCommentPost);
@@ -105,6 +105,11 @@ public class PlaceCommentActivity extends BaseActivity {
         this.btnPlaceCommentPost.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+                if(!isValidateInput()) {
+                    return;
+                }
+
                 PlaceCommentModel comment = new PlaceCommentModel();
                 comment.setText(edPlaceCommentBody.getText().toString());
                 comment.setUser(getCurrentUser());
@@ -176,5 +181,17 @@ public class PlaceCommentActivity extends BaseActivity {
             }
         });
 
+    }
+
+    private boolean isValidateInput() {
+
+        String comment = this.edPlaceCommentBody.getText().toString();
+        if(comment.isEmpty()) {
+            this.edPlaceCommentBody.setError(getString(R.string.msgErrorInputRequired));
+            this.edPlaceCommentBody.requestFocus();
+            return false;
+        }
+
+        return true;
     }
 }

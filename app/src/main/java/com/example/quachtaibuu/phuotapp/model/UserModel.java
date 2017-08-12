@@ -3,6 +3,7 @@ package com.example.quachtaibuu.phuotapp.model;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -19,13 +20,16 @@ import java.util.Map;
  * Created by Quach Tai Buu on 2017-08-07.
  */
 
-@IgnoreExtraProperties
 public class UserModel {
+
+    @JsonIgnore
+    private String userKey;
     private String displayName;
     private String email;
     private String username;
     //private Uri photoUrl;
     private String photoUrl;
+    private boolean isAdmin;
 
     public UserModel() {
     }
@@ -69,7 +73,23 @@ public class UserModel {
         this.username = username;
     }
 
-//    @Override
+    public boolean isAdmin() {
+        return isAdmin;
+    }
+
+    public void setAdmin(boolean admin) {
+        isAdmin = admin;
+    }
+
+    public String getUserKey() {
+        return userKey;
+    }
+
+    public void setUserKey(String userKey) {
+        this.userKey = userKey;
+    }
+
+    //    @Override
 //    public String toString() {
 //        return "UserModel{" +
 //                "displayName='" + displayName + '\'' +

@@ -20,6 +20,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Toast;
 
+import com.example.quachtaibuu.phuotapp.utils.UserSessionManager;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -76,6 +77,7 @@ public class MainActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.action_logout:
                 this.mAuth.signOut();
+                new UserSessionManager(getApplicationContext()).logout();
                 finish();
                 return true;
         }

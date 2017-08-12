@@ -39,8 +39,9 @@ import java.util.Map;
 
 
 public class TabNewsFeedFragment extends AbsPlacesFragment {
+
     @Override
     public Query getQuery(DatabaseReference databaseReference) {
-        return databaseReference.child("places").orderByChild("created");
+        return databaseReference.child("places").orderByChild("title").limitToFirst(100);
     }
 }
